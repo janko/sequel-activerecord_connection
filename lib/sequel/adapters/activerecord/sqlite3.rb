@@ -38,27 +38,6 @@ module Sequel
           activerecord_raw_connection.results_as_hash = original_results_as_hash
         end
       end
-
-      class Result
-        def initialize(array)
-          binding.irb
-          @array = array
-        end
-
-        def types
-          return [] if @array.empty?
-          @array[0].types
-        end
-
-        def columns
-          return [] if @array.empty?
-          @array[0].fields
-        end
-
-        def each(&block)
-          @array.each(&block)
-        end
-      end
     end
   end
 end
