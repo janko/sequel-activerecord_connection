@@ -63,6 +63,38 @@ DB[:posts].update(title: "Sequel Active Record Adapter")
 Since Sequel is using ActiveRecord connection object to make queries, any SQL
 queries will be logged to the ActiveRecord logger.
 
+### Transactions
+
+The adapter overrides Sequel transactions to use ActiveRecord transcations, so
+Sequel and ActiveRecord transactions can be used interchangeably.
+
+```rb
+DB.transaction do
+  ActiveRecord::Base.transaction do
+    # this all works
+  end
+end
+```
+
+The following `Sequel::Database#transaction` options are currently supported:
+
+* `:savepoint`
+* `:auto_savepoint`
+* `:rollback`
+
+Regarding transaction-related database methods, the only other one currently
+supported is `Sequel::Database#in_transaction?` (`#after_commit`,
+`#after_rollback` and others are not supported).
+
+### Exceptions
+
+To ensure Sequel compatibility, any `ActiveRecord::StatementInvalid` exceptions
+will be translated into Sequel exceptions:
+
+```rb
+DB[:posts].multi_insert [{ id: 1 }, { id: 1 }] #~> Sequel::UniqueConstraintViolation
+```
+
 ### Configuration
 
 By default, the connection configuration will be read from `ActiveRecord::Base`.
