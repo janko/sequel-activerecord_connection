@@ -76,15 +76,31 @@ DB.transaction do
 end
 ```
 
-The following `Sequel::Database#transaction` options are currently supported:
+The following transaction options are currently supported:
 
 * `:savepoint`
 * `:auto_savepoint`
 * `:rollback`
 
-Regarding transaction-related database methods, the only other one currently
-supported is `Sequel::Database#in_transaction?` (`#after_commit`,
-`#after_rollback` and others are not supported).
+```rb
+ActiveRecord::Base.transaction do
+  DB.transaction(savepoint: true) do
+    # creates a savepoint
+  end
+end
+```
+
+The `#in_transaction?` method is supported as well:
+
+```rb
+ActiveRecord::Base.transaction do
+  DB.in_transaction? #=> true
+end
+```
+
+Other transaction-related Sequel methods (`#after_commit`, `#after_rollback`
+etc) are not supported, because ActiveRecord currently doesn't offer
+transactional callbacks on the connection level (only on the model level).
 
 ### Exceptions
 
