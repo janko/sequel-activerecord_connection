@@ -2,11 +2,13 @@ require "test_helper"
 
 describe "General adapter" do
   before do
-    connect("postgresql")
-  end
+    connect_postgresql
 
-  after do
-    disconnect("postgresql")
+    @db.create_table! :records do
+      primary_key :id
+      String :col
+      Time :time
+    end
   end
 
   it "calls the transaction" do
@@ -138,31 +140,31 @@ describe "General adapter" do
   end
 
   it "doesn't support other transaction options" do
-    assert_raises Sequel::ActiveRecord::Error do
+    assert_raises Sequel::ActiveRecordConnection::Error do
       @db.transaction(isolation: :committed) { }
     end
   end
 
   it "doesn't support other transaction methods" do
-    assert_raises Sequel::ActiveRecord::Error do
+    assert_raises Sequel::ActiveRecordConnection::Error do
       @db.after_commit {}
     end
 
-    assert_raises Sequel::ActiveRecord::Error do
+    assert_raises Sequel::ActiveRecordConnection::Error do
       @db.after_rollback {}
     end
 
-    assert_raises Sequel::ActiveRecord::Error do
+    assert_raises Sequel::ActiveRecordConnection::Error do
       @db.rollback_on_exit {}
     end
 
-    assert_raises Sequel::ActiveRecord::Error do
+    assert_raises Sequel::ActiveRecordConnection::Error do
       @db.rollback_checker {}
     end
   end
 
   it "doesn't support Database#connect" do
-    assert_raises Sequel::ActiveRecord::Error do
+    assert_raises Sequel::ActiveRecordConnection::Error do
       @db.connect
     end
   end

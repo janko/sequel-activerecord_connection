@@ -1,13 +1,14 @@
 require "test_helper"
 
-describe "Sqlite3 adapter" do
+describe "sqlite3 connection" do
   before do
-    connect("sqlite3")
-    ActiveRecord::Base.default_timezone = :utc
-  end
+    connect_sqlite3
 
-  after do
-    disconnect("sqlite3")
+    @db.create_table! :records do
+      primary_key :id
+      String :col
+      Time :time
+    end
   end
 
   it "supports Dataset#insert" do
@@ -73,21 +74,25 @@ describe "Sqlite3 adapter" do
     SQL
   end
 
-  it "converts ActiveRecord::RecordNotUnique into Sequel::UniqueConstraintViolation" do
+  it "raises Sequel exceptions" do
     assert_raises Sequel::UniqueConstraintViolation do
       @db[:records].multi_insert [{ id: 1 }, { id: 1 }]
     end
-  end
 
-  it "converts other exceptions" do
-    assert_raises Sequel::DatabaseError do
-      @db[:foo].all
+    @db.alter_table(:records) { add_foreign_key :fkey, :records }
+
+    assert_raises Sequel::ForeignKeyConstraintViolation do
+      @db[:records].insert(fkey: 50)
+    end
+
+    @db.alter_table(:records) { add_column :required, :text, null: false, default: "default" }
+
+    assert_raises Sequel::NotNullConstraintViolation do
+      @db[:records].insert(required: nil)
     end
   end
 
-  it "correctly handles ActiveRecord's UTC timezone setting" do
-    ActiveRecord::Base.default_timezone = :utc
-
+  it "correctly handles ActiveRecord's default UTC timezone setting" do
     time = Time.new(2020, 4, 26)
 
     @db[:records].insert(time: time)
@@ -101,6 +106,7 @@ describe "Sqlite3 adapter" do
 
   it "correctly handles ActiveRecord's local timezone setting" do
     ActiveRecord::Base.default_timezone = :local
+    @db.timezone = :local
 
     time = Time.new(2020, 4, 26)
 

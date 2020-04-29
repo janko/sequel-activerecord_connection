@@ -1,13 +1,14 @@
 require "test_helper"
 
-describe "PostgreSQL adapter" do
+describe "postgres connection" do
   before do
-    connect("postgresql")
-    ActiveRecord::Base.default_timezone = :utc
-  end
+    connect_postgresql
 
-  after do
-    disconnect("postgresql")
+    @db.create_table! :records do
+      primary_key :id
+      String :col
+      Time :time
+    end
   end
 
   it "supports Dataset#insert" do
@@ -73,9 +74,21 @@ describe "PostgreSQL adapter" do
     SQL
   end
 
-  it "converts ActiveRecord::RecordNotUnique into Sequel::UniqueConstraintViolation" do
+  it "raises Sequel exceptions" do
     assert_raises Sequel::UniqueConstraintViolation do
       @db[:records].multi_insert [{ id: 1 }, { id: 1 }]
+    end
+
+    @db.alter_table(:records) { add_foreign_key :fkey, :records }
+
+    assert_raises Sequel::ForeignKeyConstraintViolation do
+      @db[:records].insert(fkey: 50)
+    end
+
+    @db.alter_table(:records) { add_column :required, :text, null: false, default: "default" }
+
+    assert_raises Sequel::NotNullConstraintViolation do
+      @db[:records].insert(required: nil)
     end
   end
 
@@ -85,10 +98,7 @@ describe "PostgreSQL adapter" do
     end
   end
 
-  it "correctly handles ActiveRecord's UTC timezone setting" do
-    ActiveRecord::Base.default_timezone = :utc
-    ActiveRecord::Base.clear_all_connections!
-
+  it "correctly handles ActiveRecord's default UTC timezone setting" do
     time = Time.new(2020, 4, 26)
 
     @db[:records].insert(time: time)
@@ -103,6 +113,7 @@ describe "PostgreSQL adapter" do
   it "correctly handles ActiveRecord's local timezone setting" do
     ActiveRecord::Base.default_timezone = :local
     ActiveRecord::Base.clear_all_connections!
+    @db.timezone = :local
 
     time = Time.new(2020, 4, 26)
 
