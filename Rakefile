@@ -11,14 +11,14 @@ task default: :test
 
 desc "Setup database used for testing on PostgreSQL"
 task :db_setup_postgres do
-  sh 'psql -U postgres -c "CREATE USER sequel_activerecord_adapter_test PASSWORD \'sequel_activerecord_adapter_test\'"'
-  sh 'createdb -U postgres -O sequel_activerecord_adapter_test sequel_activerecord_adapter_test'
+  sh 'psql -U postgres -c "CREATE USER sequel_activerecord_connection PASSWORD \'sequel_activerecord_connection\'"'
+  sh 'createdb -U postgres -O sequel_activerecord_connection sequel_activerecord_connection'
 end
 
 desc "Teardown database used for testing on PostgreSQL"
 task :db_teardown_postgres do
-  sh 'dropdb -U postgres rodauth_test'
-  sh 'dropuser -U postgres rodauth_test'
+  sh 'dropdb -U postgres sequel_activerecord_connection'
+  sh 'dropuser -U postgres sequel_activerecord_connection'
 end
 
 desc "Setup database used for testing on MySQL"

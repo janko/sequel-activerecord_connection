@@ -10,25 +10,42 @@ require "stringio"
 
 class Minitest::Test
   def connect_postgresql
-    ActiveRecord::Base.establish_connection(
-      adapter:  "postgresql",
-      database: "sequel_activerecord_adapter_test",
-      username: "sequel_activerecord_adapter_test",
-      password: "sequel_activerecord_adapter_test",
-    )
+    if ENV["CI"]
+      ActiveRecord::Base.establish_connection(
+        adapter:  "postgresql",
+        database: "sequel_activerecord_connection",
+        username: "postgres",
+      )
+    else
+      ActiveRecord::Base.establish_connection(
+        adapter:  "postgresql",
+        database: "sequel_activerecord_connection",
+        username: "sequel_activerecord_connection",
+        password: "sequel_activerecord_connection",
+      )
+    end
 
     @db = Sequel.postgres(test: false)
     @db.extension :activerecord_connection
   end
 
   def connect_mysql2
-    ActiveRecord::Base.establish_connection(
-      adapter:  "mysql2",
-      host:     "localhost",
-      database: "sequel_activerecord_adapter_test",
-      username: "sequel_activerecord_adapter_test",
-      password: "sequel_activerecord_adapter_test",
-    )
+    if ENV["CI"]
+      ActiveRecord::Base.establish_connection(
+        adapter:  "mysql2",
+        host:     "localhost",
+        database: "sequel_activerecord_connection",
+        username: "root",
+      )
+    else
+      ActiveRecord::Base.establish_connection(
+        adapter:  "mysql2",
+        host:     "localhost",
+        database: "sequel_activerecord_connection",
+        username: "sequel_activerecord_connection",
+        password: "sequel_activerecord_connection",
+      )
+    end
 
     @db = Sequel.mysql2(test: false)
     @db.extension :activerecord_connection
