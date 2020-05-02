@@ -1,8 +1,9 @@
 # Sequel::ActiveRecordConnection
 
 This is an extension for [Sequel] that allows it to reuse an existing
-ActiveRecord connection for database interaction. It supports `postgresql`,
-`mysql2` and `sqlite3` adapters.
+ActiveRecord connection for database interaction. It works on ActiveRecord 4.2
+or higher, and supports the built-in `postgresql`, `mysql2` and `sqlite3`
+adapters.
 
 This can be useful if you're using a library that uses Sequel for database
 interaction (e.g. [Rodauth]), but you want to avoid creating a separate
