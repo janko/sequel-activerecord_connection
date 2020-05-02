@@ -99,7 +99,7 @@ describe "postgres connection" do
   end
 
   it "correctly handles ActiveRecord's default UTC timezone setting" do
-    time = Time.new(2020, 4, 26)
+    time = Time.new(2020, 4, 26, 0, 0, 0, "+02:00")
 
     @db[:records].insert(time: time)
 
@@ -115,7 +115,7 @@ describe "postgres connection" do
     ActiveRecord::Base.clear_all_connections!
     @db.timezone = :local
 
-    time = Time.new(2020, 4, 26)
+    time = Time.new(2020, 4, 26, 0, 0, 0, "+02:00")
 
     @db[:records].insert(time: time)
 
