@@ -116,7 +116,7 @@ describe "postgres connection" do
     @db.timezone = :local
 
     time = Time.new(2020, 4, 26, 0, 0, 0)
-    utc_offset = time.to_s[/\S$/]
+    utc_offset = time.to_s[/\S+$/]
 
     @db[:records].insert(time: time)
 

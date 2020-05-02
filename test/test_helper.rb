@@ -7,6 +7,7 @@ require "active_record"
 require "sequel/core"
 
 require "stringio"
+require "active_support/core_ext/string"
 
 class Minitest::Test
   def connect_postgresql
@@ -62,8 +63,6 @@ class Minitest::Test
   end
 
   def setup
-    ActiveRecord::Base.default_timezone = :utc # reset default setting
-
     @log = StringIO.new
     ActiveSupport::Notifications.subscribe("sql.active_record") do |*args|
       event = ActiveSupport::Notifications::Event.new(*args)
@@ -74,6 +73,7 @@ class Minitest::Test
 
   def teardown
     ActiveRecord::Base.remove_connection
+    ActiveRecord::Base.default_timezone = :utc # reset default setting
   end
 
   def assert_logged(content)

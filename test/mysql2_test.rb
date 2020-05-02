@@ -111,7 +111,7 @@ describe "mysql2 connection" do
     ActiveRecord::Base.default_timezone = :local
     @db.timezone = :local
 
-    time = Time.new(2020, 4, 26, 0, 0, 0, "+02:00")
+    time = Time.new(2020, 4, 26, 0, 0, 0)
 
     @db[:records].insert(time: time)
 
