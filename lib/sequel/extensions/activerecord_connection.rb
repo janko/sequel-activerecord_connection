@@ -75,6 +75,14 @@ module Sequel
     def activerecord_connection
       activerecord_model.connection
     end
+
+    def activesupport_interlock(&block)
+      if ActiveSupport::Dependencies.respond_to?(:interlock)
+        ActiveSupport::Dependencies.interlock.permit_concurrent_loads(&block)
+      else
+        yield
+      end
+    end
   end
 
   Database.register_extension(:activerecord_connection, ActiveRecordConnection)

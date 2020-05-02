@@ -19,7 +19,7 @@ module Sequel
         end
 
         activerecord_connection.send(:log, sql) do
-          ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+          activesupport_interlock do
             case type
             when :select
               activerecord_raw_connection.query(sql, &block)

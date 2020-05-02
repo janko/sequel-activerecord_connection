@@ -115,14 +115,15 @@ describe "postgres connection" do
     ActiveRecord::Base.clear_all_connections!
     @db.timezone = :local
 
-    time = Time.new(2020, 4, 26, 0, 0, 0, "+02:00")
+    time = Time.new(2020, 4, 26, 0, 0, 0)
+    utc_offset = time.to_s[/\S$/]
 
     @db[:records].insert(time: time)
 
     assert_equal time, @db[:records].first[:time]
 
     assert_logged <<~SQL
-      INSERT INTO "records" ("time") VALUES ('2020-04-26 00:00:00.000000+0200') RETURNING "id"
+      INSERT INTO "records" ("time") VALUES ('2020-04-26 00:00:00.000000#{utc_offset}') RETURNING "id"
     SQL
   end
 end
