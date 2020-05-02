@@ -14,7 +14,7 @@ describe "General adapter" do
   it "calls the transaction" do
     @db.transaction { @db.run "SELECT 1" }
 
-    assert_logged <<~SQL
+    assert_logged <<-SQL.strip_heredoc
       BEGIN
       SELECT 1
       COMMIT
@@ -30,7 +30,7 @@ describe "General adapter" do
       end
     end
 
-    assert_logged <<~SQL
+    assert_logged <<-SQL.strip_heredoc
       BEGIN
       SELECT 1
       COMMIT
@@ -46,7 +46,7 @@ describe "General adapter" do
       end
     end
 
-    assert_logged <<~SQL
+    assert_logged <<-SQL.strip_heredoc
       BEGIN
       SAVEPOINT active_record_1
       SELECT 1
@@ -64,7 +64,7 @@ describe "General adapter" do
       end
     end
 
-    assert_logged <<~SQL
+    assert_logged <<-SQL.strip_heredoc
       BEGIN
       SAVEPOINT active_record_1
       SELECT 1
@@ -82,7 +82,7 @@ describe "General adapter" do
       end
     end
 
-    assert_logged <<~SQL
+    assert_logged <<-SQL.strip_heredoc
       BEGIN
       SAVEPOINT active_record_1
       SELECT 1
@@ -97,7 +97,7 @@ describe "General adapter" do
       raise Sequel::Rollback
     end
 
-    assert_logged <<~SQL
+    assert_logged <<-SQL.strip_heredoc
       BEGIN
       SELECT 1
       ROLLBACK
@@ -109,7 +109,7 @@ describe "General adapter" do
       @db.run "SELECT 1"
     end
 
-    assert_logged <<~SQL
+    assert_logged <<-SQL.strip_heredoc
       BEGIN
       SELECT 1
       ROLLBACK
@@ -124,7 +124,7 @@ describe "General adapter" do
       end
     end
 
-    assert_logged <<~SQL
+    assert_logged <<-SQL.strip_heredoc
       BEGIN
       SELECT 1
       ROLLBACK
