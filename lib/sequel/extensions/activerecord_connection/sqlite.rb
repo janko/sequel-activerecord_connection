@@ -10,9 +10,13 @@ module Sequel
       # ActiveRecord doesn't send SQLite methods Sequel expects, so we need to
       # try to replicate what ActiveRecord does around connection excecution.
       def _execute(type, sql, opts, &block)
-        activerecord_raw_connection.extended_result_codes = true
+        if activerecord_raw_connection.respond_to?(:extended_result_codes=)
+          activerecord_raw_connection.extended_result_codes = true
+        end
 
-        activerecord_connection.materialize_transactions
+        if ActiveRecord::VERSION::MAJOR >= 6
+          activerecord_connection.materialize_transactions
+        end
 
         activerecord_connection.send(:log, sql) do
           ActiveSupport::Dependencies.interlock.permit_concurrent_loads do

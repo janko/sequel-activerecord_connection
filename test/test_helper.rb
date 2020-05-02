@@ -48,7 +48,9 @@ class Minitest::Test
     ActiveRecord::Base.default_timezone = :utc # reset default setting
 
     @log = StringIO.new
-    ActiveSupport::Notifications.subscribe("sql.active_record") do |event|
+    ActiveSupport::Notifications.subscribe("sql.active_record") do |*args|
+      event = ActiveSupport::Notifications::Event.new(*args)
+
       @log.puts event.payload[:sql]
     end
   end

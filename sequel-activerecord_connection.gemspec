@@ -11,12 +11,12 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = Gem::Requirement.new(">= 2.2.0")
 
-  spec.add_dependency "sequel", "~> 5.0"
+  spec.add_dependency "sequel", ">= 4.0", "< 6"
   spec.add_dependency "activerecord", ">= 5.0", "< 7"
 
   spec.add_development_dependency "pg",      "~> 1.0"
   spec.add_development_dependency "mysql2",  "~> 0.5"
-  spec.add_development_dependency "sqlite3", "~> 1.4"
+  spec.add_development_dependency "sqlite3", "~> 1.3"
   spec.add_development_dependency "minitest"
 
   spec.files         = Dir["README.md", "LICENSE.txt", "CHANGELOG.md", "lib/**/*.rb", "*.gemspec"]

@@ -57,7 +57,11 @@ module Sequel
 
     # Avoid calling Sequel's connection pool, instead use ActiveRecord.
     def synchronize(*)
-      activerecord_connection.lock.synchronize do
+      if ActiveRecord.version >= Gem::Version.new("5.1.0")
+        activerecord_connection.lock.synchronize do
+          yield activerecord_raw_connection
+        end
+      else
         yield activerecord_raw_connection
       end
     end
