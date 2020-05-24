@@ -5,9 +5,6 @@ module Sequel
     def self.extended(db)
       db.activerecord_model = ActiveRecord::Base
       db.timezone = ActiveRecord::Base.default_timezone
-      if db.adapter_scheme == :sqlite && db.respond_to?(:current_timestamp_utc)
-        db.current_timestamp_utc = ActiveRecord::Base.default_timezone
-      end
 
       begin
         require "sequel/extensions/activerecord_connection/#{db.adapter_scheme}"

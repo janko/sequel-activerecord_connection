@@ -104,6 +104,14 @@ describe "sqlite3 connection" do
     SQL
   end
 
+  it "adds CURRENT_* timestamp in UTC when that's ActiveRecord's timezone" do
+    @db.extension :date_arithmetic
+    @db[:records].insert(time: Time.now)
+
+    refute_empty @db[:records].where(Sequel[:time] < Sequel.date_add(Sequel::CURRENT_TIMESTAMP, minutes: 1))
+    refute_empty @db[:records].where(Sequel[:time] > Sequel.date_sub(Sequel::CURRENT_TIMESTAMP, minutes: 1))
+  end if Sequel::MAJOR >= 5 && Sequel::MINOR >= 33
+
   it "correctly handles ActiveRecord's local timezone setting" do
     ActiveRecord::Base.default_timezone = :local
     @db.timezone = :local
