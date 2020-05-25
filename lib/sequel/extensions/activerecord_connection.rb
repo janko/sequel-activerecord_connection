@@ -21,7 +21,12 @@ module Sequel
       raise Error, "creating a Sequel connection is not allowed"
     end
 
-    def transaction(savepoint: nil, rollback: nil, auto_savepoint: nil, server: nil, **options)
+    def transaction(options = {})
+      savepoint      = options.delete(:savepoint)
+      rollback       = options.delete(:rollback)
+      auto_savepoint = options.delete(:auto_savepoint)
+      server         = options.delete(:server)
+
       fail Error, "#{options} transaction options are currently not supported" unless options.empty?
 
       if in_transaction?
