@@ -22,10 +22,10 @@ module Sequel
     end
 
     def transaction(options = {})
-      savepoint = options.delete(:savepoint)
-      rollback = options.delete(:rollback)
+      savepoint      = options.delete(:savepoint)
+      rollback       = options.delete(:rollback)
       auto_savepoint = options.delete(:auto_savepoint)
-      server = options.delete(:server)
+      server         = options.delete(:server)
 
       fail Error, "#{options} transaction options are currently not supported" unless options.empty?
 
