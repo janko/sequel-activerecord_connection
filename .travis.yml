@@ -7,6 +7,7 @@ rvm:
   - 2.5
   - 2.6
   - 2.7
+  - jruby-9.2.11.1
 
 gemfile:
   - gemfiles/Gemfile.activerecord-6.0
@@ -16,6 +17,8 @@ gemfile:
   - gemfiles/Gemfile.activerecord-4.2
 
 matrix:
+  allow_failures:
+    - rvm: jruby-9.2.11.1
   exclude:
     - rvm: 2.2
       gemfile: gemfiles/Gemfile.activerecord-6.0
@@ -25,6 +28,11 @@ matrix:
       gemfile: gemfiles/Gemfile.activerecord-6.0
     - rvm: 2.2
       gemfile: gemfiles/Gemfile.activerecord-5.2
+    - rvm: jruby-9.2.11.1
+      gemfile: gemfiles/Gemfile.activerecord-6.0
+      gemfile: gemfiles/Gemfile.activerecord-5.1
+      gemfile: gemfiles/Gemfile.activerecord-5.0
+      gemfile: gemfiles/Gemfile.activerecord-4.2
 
 before_script:
   - mysql -e 'create database sequel_activerecord_connection;'
