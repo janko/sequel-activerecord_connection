@@ -31,9 +31,9 @@ describe "sqlite3 connection" do
     assert_equal [:id, :col, :time], @db[:records].columns
 
     assert_logged <<-SQL.strip_heredoc
-      begin transaction
+      #{RUBY_ENGINE == "jruby" ? "BEGIN TRANSACTION" : "begin transaction"}
       INSERT INTO `records` (`col`) VALUES ('a'), ('b'), ('c')
-      commit transaction
+      #{RUBY_ENGINE == "jruby" ? "COMMIT TRANSACTION" : "commit transaction"}
       SELECT * FROM `records` ORDER BY `id`
     SQL
   end
