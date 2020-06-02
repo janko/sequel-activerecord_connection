@@ -31,9 +31,9 @@ describe "mysql2 connection" do
     assert_equal [:id, :col, :time], @db[:records].columns
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN
+      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
       INSERT INTO `records` (`col`) VALUES ('a'), ('b'), ('c')
-      COMMIT
+      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
       SELECT version()
       SELECT * FROM `records` ORDER BY `id`
     SQL

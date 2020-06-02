@@ -26,7 +26,11 @@ class Minitest::Test
       )
     end
 
-    @db = Sequel.postgres(test: false)
+    @db = if RUBY_ENGINE == "jruby"
+      Sequel.connect("jdbc:postgresql://", test: false)
+    else
+      Sequel.postgres(test: false)
+    end
     @db.extension :activerecord_connection
   end
 
@@ -48,7 +52,11 @@ class Minitest::Test
       )
     end
 
-    @db = Sequel.mysql2(test: false)
+    @db = if RUBY_ENGINE == "jruby"
+      Sequel.connect("jdbc:mysql://", test: false)
+    else
+      Sequel.mysql2(test: false)
+    end
     @db.extension :activerecord_connection
   end
 
@@ -58,7 +66,12 @@ class Minitest::Test
       database: ":memory:",
     )
 
-    @db = Sequel.sqlite(test: false)
+
+    @db = if RUBY_ENGINE == "jruby"
+      Sequel.connect("jdbc:sqlite://", test: false)
+    else
+      Sequel.sqlite(test: false)
+    end
     @db.extension :activerecord_connection
   end
 
