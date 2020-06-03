@@ -2,6 +2,8 @@
 
 * Add JRuby support for ActiveRecord 6.0 and 5.2 (@HoneyryderChuck)
 
+* Use `#current_timestamp_utc` setting for SQLite adapter on Sequel >= 5.33 (@HoneyryderChuck)
+
 ## 0.2.3 (2020-05-25)
 
 * Fix Ruby 2.7 kwargs warnings in `#transaction` (@HoneyryderChuck)
