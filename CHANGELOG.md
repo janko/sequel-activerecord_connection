@@ -1,4 +1,4 @@
-## HEAD
+## 0.2.5 (2020-06-04)
 
 * Use `#current_timestamp_utc` for the JDBC SQLite adapter as well (@HoneyryderChuck)
 
