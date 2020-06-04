@@ -1,3 +1,7 @@
+## HEAD
+
+* Use `#current_timestamp_utc` for the JDBC SQLite adapter as well (@HoneyryderChuck)
+
 ## 0.2.4 (2020-06-03)
 
 * Add JRuby support for ActiveRecord 6.0 and 5.2 (@HoneyryderChuck)
