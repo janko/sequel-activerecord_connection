@@ -1,6 +1,12 @@
 module Sequel
   module ActiveRecordConnection
     module Jdbc
+      def self.extended(db)
+        if db.timezone == :utc && db.respond_to?(:current_timestamp_utc)
+          db.current_timestamp_utc = true
+        end
+      end
+
       def statement(conn)
         stmt = activerecord_raw_connection.connection.createStatement
         yield stmt
