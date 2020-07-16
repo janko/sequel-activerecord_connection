@@ -5,6 +5,7 @@ require "minitest/pride"
 
 require "active_record"
 require "sequel/core"
+require "sequel/model"
 
 require "stringio"
 require "active_support/core_ext/string"

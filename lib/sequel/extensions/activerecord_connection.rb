@@ -22,6 +22,8 @@ module Sequel
     end
 
     def transaction(options = {})
+      options = keep_transaction_options(options)
+
       savepoint      = options.delete(:savepoint)
       rollback       = options.delete(:rollback)
       auto_savepoint = options.delete(:auto_savepoint)
@@ -38,15 +40,15 @@ module Sequel
       activerecord_model.transaction(requires_new: requires_new) do
         begin
           Thread.current[:sequel_activerecord_auto_savepoint] = true if auto_savepoint
-          yield
+          result = yield
+          raise ActiveRecord::Rollback if rollback == :always
+          result
         rescue Sequel::Rollback => exception
           raise if rollback == :reraise
           raise ActiveRecord::Rollback, exception.message, exception.backtrace
         ensure
           Thread.current[:sequel_activerecord_auto_savepoint] = nil if auto_savepoint
         end
-
-        raise ActiveRecord::Rollback if rollback == :always
       end
     end
 
@@ -72,6 +74,23 @@ module Sequel
     end
 
     private
+
+    def keep_transaction_options(options)
+      options.slice(
+        :auto_savepoint,
+        :isolation,
+        :num_retries,
+        :before_retry,
+        :prepare,
+        :retry_on,
+        :rollback,
+        :server,
+        :savepoint,
+        :deferrable,
+        :read_only,
+        :synchronous,
+      )
+    end
 
     def activerecord_raw_connection
       activerecord_connection.raw_connection
