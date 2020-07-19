@@ -22,31 +22,22 @@ module Sequel
     end
 
     def transaction(options = {})
-      savepoint      = options.delete(:savepoint)
-      rollback       = options.delete(:rollback)
-      auto_savepoint = options.delete(:auto_savepoint)
-      server         = options.delete(:server)
-
-      fail Error, "#{options} transaction options are currently not supported" unless options.empty?
-
-      if in_transaction?
-        requires_new = savepoint || Thread.current[:sequel_activerecord_auto_savepoint]
-      else
-        requires_new = true
+      %i[isolation num_retries before_retry prepare retry_on].each do |key|
+        fail Error, "#{key.inspect} transaction option is currently not supported" if options.key?(key)
       end
 
-      activerecord_model.transaction(requires_new: requires_new) do
+      activerecord_model.transaction(requires_new: !in_transaction? || options[:savepoint] || Thread.current[:sequel_activerecord_auto_savepoint]) do
         begin
-          Thread.current[:sequel_activerecord_auto_savepoint] = true if auto_savepoint
-          yield
+          Thread.current[:sequel_activerecord_auto_savepoint] = true if options[:auto_savepoint]
+          result = yield
+          raise ActiveRecord::Rollback if options[:rollback] == :always
+          result
         rescue Sequel::Rollback => exception
-          raise if rollback == :reraise
+          raise if options[:rollback] == :reraise
           raise ActiveRecord::Rollback, exception.message, exception.backtrace
         ensure
-          Thread.current[:sequel_activerecord_auto_savepoint] = nil if auto_savepoint
+          Thread.current[:sequel_activerecord_auto_savepoint] = nil if options[:auto_savepoint]
         end
-
-        raise ActiveRecord::Rollback if rollback == :always
       end
     end
 

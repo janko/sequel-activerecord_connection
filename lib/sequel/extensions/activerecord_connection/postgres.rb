@@ -14,6 +14,14 @@ module Sequel
       ensure
         result.clear if result
       end
+
+      def transaction(options = {})
+        %i[deferrable read_only synchronous].each do |key|
+          fail Error, "#{key.inspect} transaction option is currently not supported" if options.key?(key)
+        end
+
+        super
+      end
     end
   end
 end

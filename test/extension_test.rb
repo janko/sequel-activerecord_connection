@@ -21,6 +21,10 @@ describe "General adapter" do
     SQL
   end
 
+  it "returns transaction block value" do
+    assert_equal :result, @db.transaction { :result }
+  end
+
   it "reuses exiting transaction by default" do
     @db.transaction do
       assert_equal 1, ActiveRecord::Base.connection.open_transactions
@@ -139,10 +143,26 @@ describe "General adapter" do
     end
   end
 
-  it "doesn't support other transaction options" do
-    assert_raises Sequel::ActiveRecordConnection::Error do
+  it "raises exception on unsupported transaction options" do
+    assert_raises(Sequel::ActiveRecordConnection::Error) do
       @db.transaction(isolation: :committed) { }
     end
+    assert_raises(Sequel::ActiveRecordConnection::Error) do
+      @db.transaction(num_retries: 2) { }
+    end
+    assert_raises(Sequel::ActiveRecordConnection::Error) do
+      @db.transaction(before_retry: -> {}) { }
+    end
+    assert_raises(Sequel::ActiveRecordConnection::Error) do
+      @db.transaction(prepare: "foo") { }
+    end
+    assert_raises(Sequel::ActiveRecordConnection::Error) do
+      @db.transaction(retry_on: KeyError) { }
+    end
+  end
+
+  it "ignores unknown transaction options" do
+    @db.transaction(foo: "bar") { }
   end
 
   it "doesn't support other transaction methods" do

@@ -126,4 +126,16 @@ describe "postgres connection" do
       INSERT INTO "records" ("time") VALUES ('2020-04-26 00:00:00.000000#{utc_offset}') RETURNING "id"
     SQL
   end
+
+  it "raises exception on unsupported transaction options" do
+    assert_raises(Sequel::ActiveRecordConnection::Error) do
+      @db.transaction(deferrable: true) { }
+    end
+    assert_raises(Sequel::ActiveRecordConnection::Error) do
+      @db.transaction(read_only: true) { }
+    end
+    assert_raises(Sequel::ActiveRecordConnection::Error) do
+      @db.transaction(synchronous: true) { }
+    end
+  end unless RUBY_ENGINE == "jruby"
 end
