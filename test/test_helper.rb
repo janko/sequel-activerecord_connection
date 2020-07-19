@@ -67,7 +67,6 @@ class Minitest::Test
       database: ":memory:",
     )
 
-
     @db = if RUBY_ENGINE == "jruby"
       Sequel.connect("jdbc:sqlite://", test: false)
     else
@@ -88,6 +87,7 @@ class Minitest::Test
   def teardown
     ActiveRecord::Base.remove_connection
     ActiveRecord::Base.default_timezone = :utc # reset default setting
+    Sequel::DATABASES.delete(@db)
   end
 
   def assert_logged(content)
