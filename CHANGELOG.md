@@ -1,3 +1,9 @@
+## HEAD
+
+* Return block result in `Sequel::Database#transaction` (@zabolotnov87, @janko)
+
+* Fix `Sequel::Model#save_changes` or `#save` with additional options not executing (@zabolotnov87, @janko)
+
 ## 0.2.5 (2020-06-04)
 
 * Use `#current_timestamp_utc` for the JDBC SQLite adapter as well (@HoneyryderChuck)
