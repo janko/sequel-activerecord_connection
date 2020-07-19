@@ -1,4 +1,4 @@
-## HEAD
+## 0.2.6 (2020-07-19)
 
 * Return block result in `Sequel::Database#transaction` (@zabolotnov87, @janko)
 
