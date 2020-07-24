@@ -80,7 +80,10 @@ class Minitest::Test
     ActiveSupport::Notifications.subscribe("sql.active_record") do |*args|
       event = ActiveSupport::Notifications::Event.new(*args)
 
+      original_pos = @log.pos
+      @log.seek(0, IO::SEEK_END)
       @log.puts event.payload[:sql]
+      @log.pos = original_pos
     end
   end
 
@@ -91,6 +94,13 @@ class Minitest::Test
   end
 
   def assert_logged(content)
-    assert_includes @log.string, content
+    if RUBY_ENGINE == "jruby"
+      content.gsub!(/BEGIN\nSET TRANSACTION ISOLATION LEVEL (.+)/) do
+        "BEGIN ISOLATED TRANSACTION - #{$1.downcase.tr(" ", "_")}"
+      end
+      content.gsub!(/(BEGIN|COMMIT|ROLLBACK)$/, '\1 TRANSACTION')
+    end
+
+    assert_includes @log.read, content
   end
 end

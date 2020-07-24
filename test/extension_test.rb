@@ -15,9 +15,9 @@ describe "General adapter" do
     @db.transaction { @db.run "SELECT 1" }
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
@@ -50,9 +50,9 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
 
     @db.transaction do
@@ -64,9 +64,9 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
 
     ActiveRecord::Base.transaction do
@@ -78,9 +78,9 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
@@ -94,11 +94,11 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SAVEPOINT active_record_1
       SELECT 1
       RELEASE SAVEPOINT active_record_1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
 
     ActiveRecord::Base.transaction do
@@ -110,11 +110,11 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SAVEPOINT active_record_1
       SELECT 1
       RELEASE SAVEPOINT active_record_1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
@@ -128,11 +128,11 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SAVEPOINT active_record_1
       SELECT 1
       RELEASE SAVEPOINT active_record_1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
@@ -142,9 +142,9 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      ROLLBACK#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      ROLLBACK
     SQL
 
     assert_raises Sequel::Rollback do
@@ -155,9 +155,9 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      ROLLBACK#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      ROLLBACK
     SQL
   end
 
@@ -165,33 +165,33 @@ describe "General adapter" do
     @db.transaction(isolation: :uncommitted) { }
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
 
     @db.transaction(isolation: :committed) { }
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
 
     @db.transaction(isolation: :repeatable) { }
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
 
     @db.transaction(isolation: :serializable) { }
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
@@ -204,9 +204,9 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      ROLLBACK#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      ROLLBACK
     SQL
   end
 
@@ -216,8 +216,8 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
-      ROLLBACK#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
+      ROLLBACK
     SQL
 
     @db.transaction do
@@ -227,10 +227,10 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SAVEPOINT active_record_1
       ROLLBACK TO SAVEPOINT active_record_1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
@@ -342,8 +342,8 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
-      ROLLBACK#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
+      ROLLBACK
     SQL
 
     @db.transaction do
@@ -353,10 +353,10 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SAVEPOINT active_record_1
       ROLLBACK TO SAVEPOINT active_record_1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
