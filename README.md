@@ -11,8 +11,8 @@ database connection. Or if you're transitioning from ActiveRecord to Sequel,
 and want the database connection to be shared.
 
 Note that this is a best-effort implementation, so some discrepancies are still
-possible. That being said, this implementation passes [Rodauth]'s test suite
-(for all adapters), which has fairly advanced Sequel usage.
+possible. That being said, this implementation passes Rodauth's test suite
+(for all adapters), which has some fairly advanced Sequel usage.
 
 ## Installation
 
@@ -80,40 +80,16 @@ DB = Sequel.postgres(test: false) # for "postgresql" adapter
 DB = Sequel.mysql2(test: false) # for "mysql2" adapter
 # or
 DB = Sequel.sqlite(test: false) # for "sqlite3" adapter
+# or
+DB = Sequel.jdbc(test: false) # for JDBC adapter
 ```
 
 ### Transactions
 
-The database extension overrides Sequel transactions to use ActiveRecord
-transcations, which allows using ActiveRecord inside Sequel transactions (and
-vice-versa), and have things like ActiveRecord's transactional callbacks still
-work correctly.
-
-```rb
-DB.transaction do
-  ActiveRecord::Base.transaction do
-    # this all works
-  end
-end
-```
-
-The following Sequel transaction options are currently supported:
-
-* `:savepoint`
-* `:auto_savepoint`
-* `:rollback`
-
-```rb
-ActiveRecord::Base.transaction do
-  DB.transaction(savepoint: true) do # will create a savepoint
-    DB.transaction do # will not create a savepoint
-      # ...
-    end
-  end
-end
-```
-
-The `#in_transaction?` method is supported as well:
+This database extension keeps the transaction state of Sequel and ActiveRecord
+in sync, allowing you to use Sequel and ActiveRecord transactions
+interchangeably (including nesting them), and have things like ActiveRecord's
+and Sequel's transactional callbacks still work correctly.
 
 ```rb
 ActiveRecord::Base.transaction do
@@ -121,24 +97,45 @@ ActiveRecord::Base.transaction do
 end
 ```
 
-Other transaction-related Sequel methods (`#after_commit`, `#after_rollback`
-etc) are not supported, because ActiveRecord currently doesn't provide
-transactional callbacks on the connection level (only on the model level).
-
-### Exceptions
-
-To ensure Sequel compatibility, any `ActiveRecord::StatementInvalid` exceptions
-will be translated into Sequel exceptions:
+Sequel's transaction API is fully supported:
 
 ```rb
-DB[:posts].multi_insert [{ id: 1 }, { id: 1 }]
-#~> Sequel::UniqueConstraintViolation
+DB.transaction(isolation: :serializable) do
+  DB.after_commit { ... } # call block after transaction commits
+  DB.transaction(savepoint: true) do # creates a savepoint
+    # ...
+  end
+end
+```
 
-DB[:posts].insert(title: nil)
-#~> Sequel::NotNullConstraintViolation
+One caveat to keep in mind is that Sequel's transaction hooks
+(`after_commit`, `after_rollback`) will *not* run if ActiveRecord holds the
+outer transaction:
 
-DB[:posts].insert(author_id: 123)
-#~> Sequel::ForeignKeyConstraintViolation
+```rb
+DB.transaction do
+  DB.after_commit { ... } # will get executed
+end
+
+ActiveRecord::Base.transaction do
+  DB.after_commit { ... } # won't get executed
+end
+
+ActiveRecord::Base.transaction do
+  DB.transaction do
+    DB.after_commit { ... } # won't get executed
+  end
+end
+```
+
+Savepoint hooks should still work, though:
+
+```rb
+ActiveRecord::Base.transaction do
+  DB.transaction(savepoint: true) do
+    DB.after_commit { ... } # will get executed after savepoint is released
+  end
+end
 ```
 
 ### Model

@@ -1,3 +1,7 @@
+## HEAD
+
+* Fully support Sequel transaction API (all transaction options, transaction/savepoint hooks etc.) (@janko)
+
 ## 0.2.6 (2020-07-19)
 
 * Return block result in `Sequel::Database#transaction` (@zabolotnov87, @janko)
