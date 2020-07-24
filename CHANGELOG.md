@@ -1,4 +1,4 @@
-## HEAD
+## 0.3.0 (2020-07-24)
 
 * Fully support Sequel transaction API (all transaction options, transaction/savepoint hooks etc.) (@janko)
 
