@@ -29,9 +29,9 @@ describe "postgres connection" do
     assert_equal "c", records[2][:col]
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       INSERT INTO "records" ("col") VALUES ('a'), ('b'), ('c')
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
       SELECT * FROM "records" ORDER BY "id"
     SQL
   end

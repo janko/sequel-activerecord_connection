@@ -15,17 +15,32 @@ describe "General adapter" do
     @db.transaction { @db.run "SELECT 1" }
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
-  it "returns transaction block value" do
+  it "returns transaction block result" do
     assert_equal :result, @db.transaction { :result }
   end
 
-  it "reuses exiting transaction by default" do
+  it "knows when it's in a transaction" do
+    assert_equal false, @db.in_transaction?
+    assert_equal false, ActiveRecord::Base.connection.transaction_open?
+
+    @db.transaction do
+      assert_equal true, @db.in_transaction?
+      assert_equal true, ActiveRecord::Base.connection.transaction_open?
+    end
+
+    ActiveRecord::Base.transaction do
+      assert_equal true, @db.in_transaction?
+      assert_equal true, ActiveRecord::Base.connection.transaction_open?
+    end
+  end
+
+  it "reuses existing transaction by default" do
     @db.transaction do
       assert_equal 1, ActiveRecord::Base.connection.open_transactions
       @db.transaction do
@@ -35,14 +50,42 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
+    SQL
+
+    @db.transaction do
+      assert_equal 1, ActiveRecord::Base.connection.open_transactions
+      ActiveRecord::Base.transaction do
+        assert_equal 1, ActiveRecord::Base.connection.open_transactions
+        @db.run "SELECT 1"
+      end
+    end
+
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      SELECT 1
+      COMMIT
+    SQL
+
+    ActiveRecord::Base.transaction do
+      assert_equal 1, ActiveRecord::Base.connection.open_transactions
+      @db.transaction do
+        assert_equal 1, ActiveRecord::Base.connection.open_transactions
+        @db.run "SELECT 1"
+      end
+    end
+
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      SELECT 1
+      COMMIT
     SQL
   end
 
-  it "opens new transaction when savepoint: :only is passed" do
-    @db.transaction do
+  it "handles :savepoint option" do
+    ActiveRecord::Base.transaction do
       assert_equal 1, ActiveRecord::Base.connection.open_transactions
       @db.transaction(savepoint: :only) do
         assert_equal 2, ActiveRecord::Base.connection.open_transactions
@@ -51,16 +94,14 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SAVEPOINT active_record_1
       SELECT 1
       RELEASE SAVEPOINT active_record_1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
-  end
 
-  it "opens new transaction when savepoint: true is passed" do
-    @db.transaction do
+    ActiveRecord::Base.transaction do
       assert_equal 1, ActiveRecord::Base.connection.open_transactions
       @db.transaction(savepoint: true) do
         assert_equal 2, ActiveRecord::Base.connection.open_transactions
@@ -69,15 +110,15 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SAVEPOINT active_record_1
       SELECT 1
       RELEASE SAVEPOINT active_record_1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
-  it "opens new transaction when auto_savepoint: true is passed" do
+  it "handles :auto_savepoint option" do
     @db.transaction(auto_savepoint: true) do
       assert_equal 1, ActiveRecord::Base.connection.open_transactions
       @db.transaction do
@@ -87,40 +128,25 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SAVEPOINT active_record_1
       SELECT 1
       RELEASE SAVEPOINT active_record_1
-      COMMIT#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      COMMIT
     SQL
   end
 
-  it "rolls back on Sequel::Rollback" do
-    @db.transaction do
-      @db.run "SELECT 1"
-      raise Sequel::Rollback
-    end
-
-    assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
-      SELECT 1
-      ROLLBACK#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
-    SQL
-  end
-
-  it "always rolls back when rollback: :always was passed" do
+  it "handles :rollback option" do
     @db.transaction(rollback: :always) do
       @db.run "SELECT 1"
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      ROLLBACK#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      ROLLBACK
     SQL
-  end
 
-  it "re-raises rollback exception when rollback: :reraise was passed" do
     assert_raises Sequel::Rollback do
       @db.transaction(rollback: :reraise) do
         @db.run "SELECT 1"
@@ -129,58 +155,209 @@ describe "General adapter" do
     end
 
     assert_logged <<-SQL.strip_heredoc
-      BEGIN#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      BEGIN
       SELECT 1
-      ROLLBACK#{' TRANSACTION' if RUBY_ENGINE == "jruby"}
+      ROLLBACK
     SQL
   end
 
-  it "knows when it's in a transaction" do
-    assert_equal false, @db.in_transaction?
+  it "handles :isolation option" do
+    @db.transaction(isolation: :uncommitted) { }
+
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+      COMMIT
+    SQL
+
+    @db.transaction(isolation: :committed) { }
+
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+      COMMIT
+    SQL
+
+    @db.transaction(isolation: :repeatable) { }
+
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+      COMMIT
+    SQL
+
+    @db.transaction(isolation: :serializable) { }
+
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+      COMMIT
+    SQL
+  end
+
+  it "rolls back on exceptions" do
+    assert_raises KeyError do
+      @db.transaction do
+        @db.run "SELECT 1"
+        raise KeyError
+      end
+    end
+
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      SELECT 1
+      ROLLBACK
+    SQL
+  end
+
+  it "rolls back on Sequel::Rollback" do
+    @db.transaction do
+      raise Sequel::Rollback
+    end
+
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      ROLLBACK
+    SQL
 
     @db.transaction do
-      assert_equal true, @db.in_transaction?
+      @db.transaction(savepoint: true) do
+        raise Sequel::Rollback
+      end
     end
+
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      SAVEPOINT active_record_1
+      ROLLBACK TO SAVEPOINT active_record_1
+      COMMIT
+    SQL
   end
 
-  it "raises exception on unsupported transaction options" do
-    assert_raises(Sequel::ActiveRecordConnection::Error) do
-      @db.transaction(isolation: :committed) { }
+  it "supports #after_commit" do
+    after_commit_called = nil
+    @db.transaction do
+      @db.after_commit { after_commit_called = true }
     end
-    assert_raises(Sequel::ActiveRecordConnection::Error) do
-      @db.transaction(num_retries: 2) { }
+    assert after_commit_called
+
+    after_commit_called = nil
+    @db.transaction do
+      ActiveRecord::Base.transaction do
+        @db.after_commit { after_commit_called = true }
+      end
     end
-    assert_raises(Sequel::ActiveRecordConnection::Error) do
-      @db.transaction(before_retry: -> {}) { }
+    assert after_commit_called
+
+    after_commit_called = nil
+    @db.transaction do
+      ActiveRecord::Base.transaction(requires_new: true) do
+        @db.after_commit { after_commit_called = true }
+      end
     end
-    assert_raises(Sequel::ActiveRecordConnection::Error) do
-      @db.transaction(prepare: "foo") { }
+    assert after_commit_called
+
+    after_commit_called = nil
+    @db.transaction do
+      @db.transaction do
+        @db.after_commit { after_commit_called = true }
+      end
     end
-    assert_raises(Sequel::ActiveRecordConnection::Error) do
-      @db.transaction(retry_on: KeyError) { }
+    assert after_commit_called
+
+    after_commit_called = nil
+    @db.transaction do
+      @db.transaction(savepoint: true) do
+        @db.after_commit { after_commit_called = true }
+      end
     end
+    assert after_commit_called
+
+    after_commit_called = nil
+    ActiveRecord::Base.transaction do
+      @db.transaction(savepoint: true) do
+        @db.after_commit { after_commit_called = true }
+      end
+    end
+    assert after_commit_called
   end
 
-  it "ignores unknown transaction options" do
-    @db.transaction(foo: "bar") { }
+  it "supports #after_rollback" do
+    after_rollback_called = nil
+    @db.transaction do
+      @db.after_rollback { after_rollback_called = true }
+      raise Sequel::Rollback
+    end
+    assert after_rollback_called
+
+    after_rollback_called = nil
+    @db.transaction do
+      ActiveRecord::Base.transaction do
+        @db.after_rollback { after_rollback_called = true }
+        raise Sequel::Rollback
+      end
+    end
+    assert after_rollback_called
+
+    after_rollback_called = nil
+    @db.transaction do
+      ActiveRecord::Base.transaction(requires_new: true) do
+        @db.after_rollback { after_rollback_called = true }
+        raise Sequel::Rollback
+      end
+    end
+    assert after_rollback_called
+
+    after_rollback_called = nil
+    @db.transaction do
+      @db.transaction do
+        @db.after_rollback { after_rollback_called = true }
+        raise Sequel::Rollback
+      end
+    end
+    assert after_rollback_called
+
+    after_rollback_called = nil
+    @db.transaction do
+      @db.transaction(savepoint: true) do
+        @db.after_rollback { after_rollback_called = true }
+        raise Sequel::Rollback
+      end
+    end
+    assert after_rollback_called
+
+    after_rollback_called = nil
+    ActiveRecord::Base.transaction do
+      @db.transaction(savepoint: true) do
+        @db.after_rollback { after_rollback_called = true }
+        raise Sequel::Rollback
+      end
+    end
+    assert after_rollback_called
   end
 
-  it "doesn't support other transaction methods" do
-    assert_raises Sequel::ActiveRecordConnection::Error do
-      @db.after_commit {}
+  it "supports #rollback_on_exit" do
+    @db.transaction do
+      @db.rollback_on_exit
     end
 
-    assert_raises Sequel::ActiveRecordConnection::Error do
-      @db.after_rollback {}
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      ROLLBACK
+    SQL
+
+    @db.transaction do
+      @db.transaction(savepoint: true) do
+        @db.rollback_on_exit(savepoint: true)
+      end
     end
 
-    assert_raises Sequel::ActiveRecordConnection::Error do
-      @db.rollback_on_exit {}
-    end
-
-    assert_raises Sequel::ActiveRecordConnection::Error do
-      @db.rollback_checker {}
-    end
+    assert_logged <<-SQL.strip_heredoc
+      BEGIN
+      SAVEPOINT active_record_1
+      ROLLBACK TO SAVEPOINT active_record_1
+      COMMIT
+    SQL
   end
 
   it "doesn't support Database#connect" do

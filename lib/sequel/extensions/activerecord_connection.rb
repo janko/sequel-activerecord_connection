@@ -2,6 +2,13 @@ module Sequel
   module ActiveRecordConnection
     Error = Class.new(Sequel::Error)
 
+    TRANSACTION_ISOLATION_MAP = {
+      uncommitted:  :read_uncommitted,
+      committed:    :read_committed,
+      repeatable:   :repeatable_read,
+      serializable: :serializable,
+    }
+
     def self.extended(db)
       db.activerecord_model = ActiveRecord::Base
       db.timezone = ActiveRecord::Base.default_timezone
@@ -21,36 +28,6 @@ module Sequel
       raise Error, "creating a Sequel connection is not allowed"
     end
 
-    def transaction(options = {})
-      %i[isolation num_retries before_retry prepare retry_on].each do |key|
-        fail Error, "#{key.inspect} transaction option is currently not supported" if options.key?(key)
-      end
-
-      activerecord_model.transaction(requires_new: !in_transaction? || options[:savepoint] || Thread.current[:sequel_activerecord_auto_savepoint]) do
-        begin
-          Thread.current[:sequel_activerecord_auto_savepoint] = true if options[:auto_savepoint]
-          result = yield
-          raise ActiveRecord::Rollback if options[:rollback] == :always
-          result
-        rescue Sequel::Rollback => exception
-          raise if options[:rollback] == :reraise
-          raise ActiveRecord::Rollback, exception.message, exception.backtrace
-        ensure
-          Thread.current[:sequel_activerecord_auto_savepoint] = nil if options[:auto_savepoint]
-        end
-      end
-    end
-
-    def in_transaction?(*)
-      activerecord_connection.transaction_open?
-    end
-
-    %i[after_commit after_rollback rollback_on_exit rollback_checker].each do |meth|
-      define_method(meth) do |*|
-        fail Error, "Database##{meth} is currently not supported"
-      end
-    end
-
     # Avoid calling Sequel's connection pool, instead use ActiveRecord.
     def synchronize(*)
       if ActiveRecord.version >= Gem::Version.new("5.1.0")
@@ -63,6 +40,53 @@ module Sequel
     end
 
     private
+
+    # Backfills any ActiveRecord transactions/savepoints that have been opened
+    # directly via ActiveRecord::Base.transaction. Sequel uses this information
+    # to know whether we're in a transaction, whether to create a savepoint,
+    # when to run transaction/savepoint hooks etc.
+    def _trans(conn)
+      Sequel.synchronize do
+        result = @transactions[conn]
+
+        if activerecord_connection.transaction_open?
+          result ||= { savepoints: [] }
+          while result[:savepoints].length < activerecord_connection.open_transactions
+            result[:savepoints].unshift({ activerecord: true })
+          end
+        end
+
+        @transactions[conn] = result if result
+        result
+      end
+    end
+
+    # First delete any transactions/savepoints opened directly via
+    # ActiveRecord::Base.transaction, so that Sequel can detect when the last
+    # Sequel transaction has been closed and clear transaction information.
+    def transaction_finished?(conn)
+      _trans(conn)[:savepoints].shift while _trans(conn)[:savepoints].first[:activerecord]
+      super
+    end
+
+    def begin_transaction(conn, opts = {})
+      isolation = TRANSACTION_ISOLATION_MAP.fetch(opts[:isolation]) if opts[:isolation]
+
+      activerecord_connection.begin_transaction(isolation: isolation)
+    end
+
+    def commit_transaction(conn, opts = {})
+      activerecord_connection.commit_transaction
+    end
+
+    def rollback_transaction(conn, opts = {})
+      activerecord_connection.rollback_transaction
+      activerecord_connection.transaction_manager.send(:after_failure_actions, activerecord_connection.current_transaction, $!) if activerecord_connection.transaction_manager.respond_to?(:after_failure_actions)
+    end
+
+    def savepoint_level(conn)
+      activerecord_connection.open_transactions
+    end
 
     def activerecord_raw_connection
       activerecord_connection.raw_connection

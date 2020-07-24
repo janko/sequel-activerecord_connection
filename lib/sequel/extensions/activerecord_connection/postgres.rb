@@ -9,6 +9,8 @@ module Sequel
         else
           result.cmd_tuples
         end
+      rescue ActiveRecord::PreparedStatementCacheExpired
+        raise # ActiveRecord's transaction manager needs to handle this exception
       rescue ActiveRecord::StatementInvalid => exception
         raise_error(exception.cause, classes: database_error_classes)
       ensure
