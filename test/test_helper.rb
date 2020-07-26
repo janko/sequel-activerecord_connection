@@ -12,20 +12,12 @@ require "active_support/core_ext/string"
 
 class Minitest::Test
   def connect_postgresql
-    if ENV["CI"]
-      ActiveRecord::Base.establish_connection(
-        adapter:  "postgresql",
-        database: "sequel_activerecord_connection",
-        username: "postgres",
-      )
-    else
-      ActiveRecord::Base.establish_connection(
-        adapter:  "postgresql",
-        database: "sequel_activerecord_connection",
-        username: "sequel_activerecord_connection",
-        password: "sequel_activerecord_connection",
-      )
-    end
+    ActiveRecord::Base.establish_connection(
+      adapter:  "postgresql",
+      database: "sequel_activerecord_connection",
+      **(ENV["CI"] ? { username: "postgres" }
+                   : { username: "sequel_activerecord_connection", password: "sequel_activerecord_connection" })
+    )
 
     @db = if RUBY_ENGINE == "jruby"
       Sequel.connect("jdbc:postgresql://", test: false)
@@ -36,22 +28,13 @@ class Minitest::Test
   end
 
   def connect_mysql2
-    if ENV["CI"]
-      ActiveRecord::Base.establish_connection(
-        adapter:  "mysql2",
-        host:     "localhost",
-        database: "sequel_activerecord_connection",
-        username: "root",
-      )
-    else
-      ActiveRecord::Base.establish_connection(
-        adapter:  "mysql2",
-        host:     "localhost",
-        database: "sequel_activerecord_connection",
-        username: "sequel_activerecord_connection",
-        password: "sequel_activerecord_connection",
-      )
-    end
+    ActiveRecord::Base.establish_connection(
+      adapter:  "mysql2",
+      host:     "localhost",
+      database: "sequel_activerecord_connection",
+      **(ENV["CI"] ? { username: "root" }
+                   : { username: "sequel_activerecord_connection", password: "sequel_activerecord_connection" })
+    )
 
     @db = if RUBY_ENGINE == "jruby"
       Sequel.connect("jdbc:mysql://", test: false)
