@@ -19,12 +19,8 @@ class Minitest::Test
                    : { username: "sequel_activerecord_connection", password: "sequel_activerecord_connection" })
     )
 
-    @db = if RUBY_ENGINE == "jruby"
-      Sequel.connect("jdbc:postgresql://", test: false)
-    else
-      Sequel.postgres(test: false)
-    end
-    @db.extension :activerecord_connection
+    @db = Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}postgresql://",
+      extensions: :activerecord_connection
   end
 
   def connect_mysql2
@@ -36,12 +32,8 @@ class Minitest::Test
                    : { username: "sequel_activerecord_connection", password: "sequel_activerecord_connection" })
     )
 
-    @db = if RUBY_ENGINE == "jruby"
-      Sequel.connect("jdbc:mysql://", test: false)
-    else
-      Sequel.mysql2(test: false)
-    end
-    @db.extension :activerecord_connection
+    @db = Sequel.connect (RUBY_ENGINE == "jruby" ? "jdbc:mysql://" : "mysql2://"),
+      extensions: :activerecord_connection
   end
 
   def connect_sqlite3
@@ -50,12 +42,8 @@ class Minitest::Test
       database: ":memory:",
     )
 
-    @db = if RUBY_ENGINE == "jruby"
-      Sequel.connect("jdbc:sqlite://", test: false)
-    else
-      Sequel.sqlite(test: false)
-    end
-    @db.extension :activerecord_connection
+    @db = Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}sqlite://",
+      extensions: :activerecord_connection
   end
 
   def setup

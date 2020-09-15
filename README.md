@@ -42,8 +42,7 @@ appropriate Sequel adapter and load the `activerecord_connection` extension:
 ```rb
 require "sequel"
 
-DB = Sequel.postgres(test: false) # avoid creating a connection
-DB.extension :activerecord_connection
+DB = Sequel.postgres(extensions: :activerecord_connection)
 ```
 
 Now any Sequel operations that you make will internaly be done using the
@@ -75,13 +74,13 @@ ActiveRecord adapters, just make sure to initialize the corresponding Sequel
 adapter before loading the extension.
 
 ```rb
-DB = Sequel.postgres(test: false) # for "postgresql" adapter
+DB = Sequel.postgres(extensions: :activerecord_connection) # for "postgresql" adapter
 # or
-DB = Sequel.mysql2(test: false) # for "mysql2" adapter
+DB = Sequel.mysql2(extensions: :activerecord_connection) # for "mysql2" adapter
 # or
-DB = Sequel.sqlite(test: false) # for "sqlite3" adapter
+DB = Sequel.sqlite(extensions: :activerecord_connection) # for "sqlite3" adapter
 # or
-DB = Sequel.jdbc(test: false) # for JDBC adapter
+DB = Sequel.jdbc(extensions: :activerecord_connection) # for JDBC adapter
 ```
 
 ### Transactions
