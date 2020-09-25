@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Sequel
   module ActiveRecordConnection
     Error = Class.new(Sequel::Error)
@@ -41,38 +43,43 @@ module Sequel
 
     private
 
-    # Backfills any ActiveRecord transactions/savepoints that have been opened
-    # directly via ActiveRecord::Base.transaction. Sequel uses this information
-    # to know whether we're in a transaction, whether to create a savepoint,
-    # when to run transaction/savepoint hooks etc.
+    # Synchronizes transaction state with ActiveRecord. Sequel uses this
+    # information to know whether we're in a transaction, whether to create a
+    # savepoint, when to run transaction/savepoint hooks etc.
     def _trans(conn)
-      Sequel.synchronize do
-        result = @transactions[conn]
+      hash = super || { savepoints: [], activerecord: true }
 
-        if activerecord_connection.transaction_open?
-          result ||= { savepoints: [] }
-          while result[:savepoints].length < activerecord_connection.open_transactions
-            result[:savepoints].unshift({ activerecord: true })
-          end
-        end
-
-        @transactions[conn] = result if result
-        result
+      # add any ActiveRecord transactions/savepoints that have been opened
+      # directly via ActiveRecord::Base.transaction
+      while hash[:savepoints].length < activerecord_connection.open_transactions
+        hash[:savepoints] << { activerecord: true }
       end
-    end
 
-    # First delete any transactions/savepoints opened directly via
-    # ActiveRecord::Base.transaction, so that Sequel can detect when the last
-    # Sequel transaction has been closed and clear transaction information.
-    def transaction_finished?(conn)
-      _trans(conn)[:savepoints].shift while _trans(conn)[:savepoints].first[:activerecord]
+      # remove any ActiveRecord transactions/savepoints that have been closed
+      # directly via ActiveRecord::Base.transaction
+      while hash[:savepoints].length > activerecord_connection.open_transactions && hash[:savepoints].last[:activerecord]
+        hash[:savepoints].pop
+      end
+
+      # sync knowledge about joinability of current transaction/savepoint
+      if activerecord_connection.transaction_open? && !activerecord_connection.current_transaction.joinable?
+        hash[:savepoints].last[:auto_savepoint] = true
+      end
+
+      if hash[:savepoints].empty? && hash[:activerecord]
+        Sequel.synchronize { @transactions.delete(conn) }
+      else
+        Sequel.synchronize { @transactions[conn] = hash }
+      end
+
       super
     end
 
     def begin_transaction(conn, opts = {})
       isolation = TRANSACTION_ISOLATION_MAP.fetch(opts[:isolation]) if opts[:isolation]
+      joinable  = !opts[:auto_savepoint]
 
-      activerecord_connection.begin_transaction(isolation: isolation)
+      activerecord_connection.begin_transaction(isolation: isolation, joinable: joinable)
     end
 
     def commit_transaction(conn, opts = {})
@@ -84,8 +91,20 @@ module Sequel
       activerecord_connection.transaction_manager.send(:after_failure_actions, activerecord_connection.current_transaction, $!) if activerecord_connection.transaction_manager.respond_to?(:after_failure_actions)
     end
 
-    def savepoint_level(conn)
-      activerecord_connection.open_transactions
+    def add_transaction_hook(conn, type, block)
+      if _trans(conn)[:activerecord]
+        fail Error, "cannot add transaction hook when ActiveRecord holds the outer transaction"
+      end
+
+      super
+    end
+
+    def add_savepoint_hook(conn, type, block)
+      if _trans(conn)[:savepoints].last[:activerecord]
+        fail Error, "cannot add savepoint hook when ActiveRecord holds the current savepoint"
+      end
+
+      super
     end
 
     def activerecord_raw_connection

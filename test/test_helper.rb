@@ -12,7 +12,7 @@ require "active_support/core_ext/string"
 
 class Minitest::Test
   def connect_postgresql
-    ActiveRecord::Base.establish_connection(
+    activerecord_connect(
       adapter:  "postgresql",
       database: "sequel_activerecord_connection",
       **(ENV["CI"] ? { username: "postgres" }
@@ -24,7 +24,7 @@ class Minitest::Test
   end
 
   def connect_mysql2
-    ActiveRecord::Base.establish_connection(
+    activerecord_connect(
       adapter:  "mysql2",
       host:     "localhost",
       database: "sequel_activerecord_connection",
@@ -37,7 +37,7 @@ class Minitest::Test
   end
 
   def connect_sqlite3
-    ActiveRecord::Base.establish_connection(
+    activerecord_connect(
       adapter: "sqlite3",
       database: ":memory:",
     )
@@ -73,5 +73,10 @@ class Minitest::Test
     end
 
     assert_includes @log.read, content
+  end
+
+  def activerecord_connect(**options)
+    ActiveRecord::Base.establish_connection(**options)
+    ActiveRecord::Base.connection.disable_lazy_transactions!
   end
 end

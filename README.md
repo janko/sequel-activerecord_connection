@@ -100,39 +100,36 @@ Sequel's transaction API is fully supported:
 
 ```rb
 DB.transaction(isolation: :serializable) do
-  DB.after_commit { ... } # call block after transaction commits
+  DB.after_commit { ... } # executed after transaction commits
   DB.transaction(savepoint: true) do # creates a savepoint
-    # ...
+    DB.after_commit(savepoint: true) { ... } # executed if all enclosing savepoints have been released
   end
 end
 ```
 
-One caveat to keep in mind is that Sequel's transaction hooks
-(`after_commit`, `after_rollback`) will *not* run if ActiveRecord holds the
-outer transaction:
+One caveat to keep in mind is that using Sequel's transaction/savepoint hooks
+currently don't work if ActiveRecord holds the corresponding
+transaction/savepoint. This is because it's difficult to be notified when
+ActiveRecord commits or rolls back the transaction/savepoint.
 
 ```rb
 DB.transaction do
   DB.after_commit { ... } # will get executed
 end
 
-ActiveRecord::Base.transaction do
-  DB.after_commit { ... } # won't get executed
-end
-
-ActiveRecord::Base.transaction do
-  DB.transaction do
-    DB.after_commit { ... } # won't get executed
+DB.transaction do
+  DB.transaction(savepoint: true) do
+    DB.after_commit(savepoint: true) { ... } # will get executed
   end
 end
-```
 
-Savepoint hooks should still work, though:
-
-```rb
 ActiveRecord::Base.transaction do
-  DB.transaction(savepoint: true) do
-    DB.after_commit { ... } # will get executed after savepoint is released
+  DB.after_commit { ... } # not allowed (will raise Sequel::ActiveRecordConnection::Error)
+end
+
+DB.transaction do
+  ActiveRecord::Base.transaction(requires_new: true) do
+    DB.after_commit(savepoint: true) { ... } # not allowed (will raise Sequel::ActiveRecordConnection::Error)
   end
 end
 ```

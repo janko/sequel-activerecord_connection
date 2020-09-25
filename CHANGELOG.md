@@ -1,3 +1,17 @@
+## HEAD
+
+* Return correct result of `Database#in_transaction?` after ActiveRecord transaction exited (@janko)
+
+* Make ActiveRecord create a savepoint inside a Sequel transaction with `auto_savepoint: true` (@janko)
+
+* Make Sequel create a savepoint inside ActiveRecord transaction with `joinable: false` (@janko)
+
+* Improve reliability of nested transactions when combining Sequel and ActiveRecord (@janko)
+
+* Raise error when attempting to add an `after_commit`/`after_rollback` hook on ActiveRecord transaction (@janko)
+
+* Fix infinite loop that could happen with transactional Rails tests (@janko)
+
 ## 0.3.0 (2020-07-24)
 
 * Fully support Sequel transaction API (all transaction options, transaction/savepoint hooks etc.) (@janko)
