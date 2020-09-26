@@ -61,7 +61,7 @@ module Sequel
         hash[:savepoints].pop
       end
 
-      # sync knowledge about joinability of current transaction/savepoint
+      # sync knowledge about joinability of current ActiveRecord transaction/savepoint
       if activerecord_connection.transaction_open? && !activerecord_connection.current_transaction.joinable?
         hash[:savepoints].last[:auto_savepoint] = true
       end
