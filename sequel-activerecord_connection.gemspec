@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = Gem::Requirement.new(">= 2.2.0")
 
-  spec.add_dependency "sequel", ">= 4.0", "< 6"
+  spec.add_dependency "sequel", "~> 5.16"
   spec.add_dependency "activerecord", ">= 4.2", "< 7"
 
   spec.add_development_dependency "minitest"
