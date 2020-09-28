@@ -1,4 +1,4 @@
-## HEAD
+## 0.4.1 (2020-09-28)
 
 * Require Sequel version 5.16.0 or above (@janko)
 
