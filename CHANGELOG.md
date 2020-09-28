@@ -1,4 +1,4 @@
-## HEAD
+## 0.4.0 (2020-09-28)
 
 * Return correct result of `Database#in_transaction?` after ActiveRecord transaction exited (@janko)
 
