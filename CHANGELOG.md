@@ -1,5 +1,7 @@
 ## HEAD
 
+* Correctly identify identity columns as primary keys in Postgres adapter (@janko)
+
 * Avoid using deprecated `sqlite3` API in SQLite adapter (@janko)
 
 * Allow using any external Active Record adapters (@janko)

@@ -1,7 +1,7 @@
 require "test_helper"
 require "logger"
 
-describe "General adapter" do
+describe "General extension" do
   before do
     connect_postgresql
 

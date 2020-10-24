@@ -153,6 +153,10 @@ describe "postgres connection" do
     SQL
   end
 
+  it "correctly identifies identity columns as primary keys" do
+    assert_equal true, @db.schema(:records)[0][1][:primary_key]
+  end
+
   it "converts disconnects into Sequel::DatabaseDisconnectError" do
     @db.synchronize { |conn| conn.finish }
 
