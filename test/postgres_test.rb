@@ -182,5 +182,5 @@ describe "postgres connection" do
     assert_raises Sequel::DatabaseDisconnectError do
       @db.copy_table(@db[:records])
     end
-  end
+  end unless RUBY_ENGINE == "jruby"
 end
