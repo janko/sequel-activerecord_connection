@@ -75,18 +75,18 @@ module Sequel
       super
     end
 
-    def begin_transaction(conn, opts = {})
+    def begin_transaction(conn, opts = OPTS)
       isolation = TRANSACTION_ISOLATION_MAP.fetch(opts[:isolation]) if opts[:isolation]
       joinable  = !opts[:auto_savepoint]
 
       activerecord_connection.begin_transaction(isolation: isolation, joinable: joinable)
     end
 
-    def commit_transaction(conn, opts = {})
+    def commit_transaction(conn, opts = OPTS)
       activerecord_connection.commit_transaction
     end
 
-    def rollback_transaction(conn, opts = {})
+    def rollback_transaction(conn, opts = OPTS)
       activerecord_connection.rollback_transaction
       activerecord_connection.transaction_manager.send(:after_failure_actions, activerecord_connection.current_transaction, $!) if activerecord_connection.transaction_manager.respond_to?(:after_failure_actions)
     end
