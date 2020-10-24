@@ -19,7 +19,7 @@ module Sequel
         require "sequel/extensions/activerecord_connection/#{db.adapter_scheme}"
         db.extend Sequel::ActiveRecordConnection.const_get(db.adapter_scheme.capitalize)
       rescue LoadError
-        fail Error, "unsupported adapter: #{db.adapter_scheme}"
+        # assume the Sequel adapter already works with Active Record
       end
     end
 

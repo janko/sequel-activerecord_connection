@@ -1,5 +1,7 @@
 ## HEAD
 
+* Allow using any external Active Record adapters (@janko)
+
 * Avoid potential bugs when converting Active Record exceptions into Sequel exceptions (@janko)
 
 * Don't use Active Record locks when executing queries with Sequel (@janko)
