@@ -16,7 +16,11 @@ describe "General extension" do
     it "returns the underlying connection object" do
       conn = @db.synchronize { |conn| conn }
 
-      assert_instance_of PG::Connection, conn
+      if RUBY_ENGINE == "jruby"
+        assert_instance_of Java::OrgPostgresqlJdbc::PgConnection, conn
+      else
+        assert_instance_of PG::Connection, conn
+      end
     end
 
     it "materializes transactions" do
@@ -648,6 +652,6 @@ describe "General extension" do
       conn = @db.synchronize { |conn| conn }
       @db.disconnect
       refute conn.finished?
-    end
+    end unless RUBY_ENGINE == "jruby"
   end
 end

@@ -154,5 +154,5 @@ describe "mysql2 connection" do
     assert_equal :array, conn.query_options[:as]
     assert_equal false,  conn.query_options[:symbolize_keys]
     assert_equal true,   conn.query_options[:cache_rows]
-  end
+  end unless RUBY_ENGINE == "jruby"
 end

@@ -170,14 +170,14 @@ describe "postgres connection" do
     assert_logged <<-SQL.strip_heredoc
       COPY "records" FROM STDIN
     SQL
-  end
+  end unless RUBY_ENGINE == "jruby"
 
   it "correctly identifies identity columns as primary keys" do
     assert_equal true, @db.schema(:records)[0][1][:primary_key]
   end
 
   it "converts disconnects into Sequel::DatabaseDisconnectError" do
-    @db.synchronize { |conn| conn.finish }
+    @db.synchronize { |conn| @db.disconnect_connection(conn) }
 
     assert_raises Sequel::DatabaseDisconnectError do
       @db.copy_table(@db[:records])
