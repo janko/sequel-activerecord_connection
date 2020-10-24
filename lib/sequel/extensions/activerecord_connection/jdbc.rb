@@ -6,6 +6,12 @@ module Sequel
           db.current_timestamp_utc = true
         end
       end
+
+      def synchronize(*)
+        super do |conn|
+          yield conn.connection
+        end
+      end
     end
   end
 end
