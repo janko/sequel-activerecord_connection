@@ -1,5 +1,7 @@
 ## HEAD
 
+* Support prepared statements and bound variables in all adapters (@janko)
+
 * Correctly identify identity columns as primary keys in Postgres adapter (@janko)
 
 * Avoid using deprecated `sqlite3` API in SQLite adapter (@janko)

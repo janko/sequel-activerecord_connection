@@ -74,6 +74,27 @@ describe "sqlite3 connection" do
     SQL
   end
 
+  it "supports bound variables" do
+    record_id = @db[:records].insert(col: "foo")
+
+    record = @db[:records]
+      .where(col: :$c)
+      .call(:first, c: "foo")
+
+    assert_equal record_id, record[:id]
+  end
+
+  it "supports prepared statements" do
+    record_id = @db[:records].insert(col: "foo")
+
+    record = @db[:records]
+      .where(col: :$c)
+      .prepare(:first, :first_by_col)
+      .call(c: "foo")
+
+    assert_equal record_id, record[:id]
+  end
+
   it "raises Sequel exceptions" do
     assert_raises Sequel::UniqueConstraintViolation do
       @db[:records].multi_insert [{ id: 1 }, { id: 1 }]

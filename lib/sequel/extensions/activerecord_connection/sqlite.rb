@@ -7,13 +7,11 @@ module Sequel
         end
       end
 
-      def execute_ddl(sql, opts = OPTS)
-        execute_dui(sql, opts)
-      end
-
       def synchronize(*)
         super do |conn|
           conn.extended_result_codes = true if conn.respond_to?(:extended_result_codes=)
+
+          Utils.add_prepared_statements_cache(conn)
 
           Utils.set_value(conn, :results_as_hash, nil) do
             yield conn

@@ -6,6 +6,8 @@ module Sequel
           conn.extend(ConnectionMethods)
           conn.instance_variable_set(:@db, self)
 
+          Utils.add_prepared_statements_cache(conn)
+
           Utils.set_value(conn, :type_map_for_results, PG::TypeMapAllStrings.new) do
             yield conn
           end

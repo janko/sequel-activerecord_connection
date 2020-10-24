@@ -122,6 +122,15 @@ module Sequel
       ensure
         object.send(:"#{name}=", original_value)
       end
+
+      def self.add_prepared_statements_cache(conn)
+        return if conn.respond_to?(:prepared_statements)
+
+        class << conn
+          attr_accessor :prepared_statements
+        end
+        conn.prepared_statements = {}
+      end
     end
   end
 
