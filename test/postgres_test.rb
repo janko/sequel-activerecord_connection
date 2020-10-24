@@ -138,4 +138,26 @@ describe "postgres connection" do
       @db.transaction(synchronous: true) { }
     end
   end unless RUBY_ENGINE == "jruby"
+
+  it "supports #copy_table and #copy_into" do
+    @db.copy_table(@db[:records])
+
+    assert_logged <<-SQL.strip_heredoc
+      COPY (SELECT * FROM "records") TO STDOUT
+    SQL
+
+    @db.copy_into(:records, data: [])
+
+    assert_logged <<-SQL.strip_heredoc
+      COPY "records" FROM STDIN
+    SQL
+  end
+
+  it "converts disconnects into Sequel::DatabaseDisconnectError" do
+    @db.synchronize { |conn| conn.finish }
+
+    assert_raises Sequel::DatabaseDisconnectError do
+      @db.copy_table(@db[:records])
+    end
+  end
 end

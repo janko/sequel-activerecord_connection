@@ -30,15 +30,14 @@ module Sequel
       raise Error, "creating a Sequel connection is not allowed"
     end
 
-    # Avoid calling Sequel's connection pool, instead use ActiveRecord.
+    # Avoid calling Sequel's connection pool, instead use Active Record's.
     def synchronize(*)
-      if ActiveRecord.version >= Gem::Version.new("5.1.0")
-        activerecord_connection.lock.synchronize do
-          yield activerecord_raw_connection
-        end
-      else
-        yield activerecord_raw_connection
-      end
+      yield activerecord_connection.raw_connection
+    end
+
+    # Log executed queries into Active Record logger as well.
+    def log_connection_yield(sql, *)
+      activerecord_log(sql) { super }
     end
 
     private
@@ -107,20 +106,12 @@ module Sequel
       super
     end
 
-    def activerecord_raw_connection
-      activerecord_connection.raw_connection
-    end
-
     def activerecord_connection
       activerecord_model.connection
     end
 
-    def activesupport_interlock(&block)
-      if ActiveSupport::Dependencies.respond_to?(:interlock)
-        ActiveSupport::Dependencies.interlock.permit_concurrent_loads(&block)
-      else
-        yield
-      end
+    def activerecord_log(sql, &block)
+      ActiveSupport::Notifications.instrument("sql.active_record", sql: sql, name: "Sequel", &block)
     end
   end
 

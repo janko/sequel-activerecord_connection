@@ -1,3 +1,21 @@
+## HEAD
+
+* Avoid potential bugs when converting Active Record exceptions into Sequel exceptions (@janko)
+
+* Don't use Active Record locks when executing queries with Sequel (@janko)
+
+* Support `Database#valid_connection?` in Postgres adapter (@janko)
+
+* Fully utilize Sequel's logic for detecting disconnects in Postgres adapter (@janko)
+
+* Support `Database#{copy_table,copy_into,listen}` in Postgres adapter (@janko)
+
+* Log all queries executed by Sequel (@janko)
+
+* Log executed queries to Sequel logger(s) as well (@janko)
+
+* Specially label queries executed by Sequel in Active Record logs (@janko)
+
 ## 0.4.1 (2020-09-28)
 
 * Require Sequel version 5.16.0 or above (@janko)

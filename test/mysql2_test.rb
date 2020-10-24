@@ -121,4 +121,18 @@ describe "mysql2 connection" do
       INSERT INTO `records` (`time`) VALUES ('2020-04-26 00:00:00')
     SQL
   end
+
+  it "restores original query options" do
+    conn = @db.synchronize { |conn| conn }
+
+    assert_equal :array, conn.query_options[:as]
+    assert_equal false,  conn.query_options[:symbolize_keys]
+    assert_equal true,   conn.query_options[:cache_rows]
+
+    assert_raises(KeyError) { @db.synchronize { |conn| raise(KeyError) } }
+
+    assert_equal :array, conn.query_options[:as]
+    assert_equal false,  conn.query_options[:symbolize_keys]
+    assert_equal true,   conn.query_options[:cache_rows]
+  end
 end

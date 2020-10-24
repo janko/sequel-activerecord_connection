@@ -1,4 +1,5 @@
 require "test_helper"
+require "logger"
 
 describe "General adapter" do
   before do
@@ -9,6 +10,25 @@ describe "General adapter" do
       String :col
       Time :time
     end
+  end
+
+  describe "#synchronize" do
+    it "returns the underlying connection object" do
+      conn = @db.synchronize { |conn| conn }
+
+      assert_instance_of PG::Connection, conn
+    end
+
+    it "materializes transactions" do
+      ActiveRecord::Base.connection.enable_lazy_transactions!
+
+      ActiveRecord::Base.transaction { @db.synchronize {} }
+
+      assert_logged <<-SQL.strip_heredoc
+        BEGIN
+        COMMIT
+      SQL
+    end if ActiveRecord::VERSION::MAJOR >= 6
   end
 
   describe "#transaction" do
@@ -581,11 +601,36 @@ describe "General adapter" do
     end
   end
 
+  describe "#log_connection_yield" do
+    it "still logs queries to Sequel logger(s)" do
+      @db.logger = Logger.new(output = StringIO.new)
+      @db.run "SELECT 1"
+
+      assert_match /SELECT 1/, output.string
+    end
+  end
+
+  describe "#valid_connection?" do
+    it "returns true if connection is valid" do
+      conn = @db.synchronize { |conn| conn }
+
+      assert_equal true, @db.valid_connection?(conn)
+    end
+  end
+
   describe "#connect" do
     it "is disallowed" do
       assert_raises Sequel::ActiveRecordConnection::Error do
         @db.connect
       end
+    end
+  end
+
+  describe "#disconnect" do
+    it "doesn't close the connection" do
+      conn = @db.synchronize { |conn| conn }
+      @db.disconnect
+      refute conn.finished?
     end
   end
 end
