@@ -135,7 +135,6 @@ describe "sqlite3 connection" do
 
   it "correctly handles ActiveRecord's local timezone setting" do
     ActiveRecord::Base.default_timezone = :local
-    @db.timezone = :local
 
     time = Time.new(2020, 4, 26, 0, 0, 0)
 

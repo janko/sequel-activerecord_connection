@@ -149,19 +149,6 @@ end
 DB.activerecord_model = MyModel
 ```
 
-### Timezone
-
-Sequel's database timezone will be automatically set to ActiveRecord's default
-timezone (`:utc` by default) when the extension is loaded.
-
-If you happen to be changing ActiveRecord's default timezone after you've
-loaded the extension, make sure to reflect that in your Sequel database object,
-for example:
-
-```rb
-DB.timezone = :local
-```
-
 ## Tests
 
 You'll first want to run the rake tasks for setting up databases and users:

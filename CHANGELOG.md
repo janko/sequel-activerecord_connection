@@ -1,5 +1,7 @@
 ## HEAD
 
+* Pick up `ActiveRecord::Base.default_timezone` being changed on runtime (@janko)
+
 * Support prepared statements and bound variables in all adapters (@janko)
 
 * Correctly identify identity columns as primary keys in Postgres adapter (@janko)

@@ -601,6 +601,23 @@ describe "General extension" do
     end
   end
 
+  describe "#timezone" do
+    it "defaults to ActiveRecord::Base.default_timezone" do
+      ActiveRecord::Base.default_timezone = :utc
+      assert_equal :utc, @db.timezone
+
+      ActiveRecord::Base.default_timezone = :local
+      assert_equal :local, @db.timezone
+    end
+
+    it "picks manually set value" do
+      ActiveRecord::Base.default_timezone = :utc
+      @db.timezone = :local
+
+      assert_equal :local, @db.timezone
+    end
+  end
+
   describe "#log_connection_yield" do
     it "still logs queries to Sequel logger(s)" do
       @db.logger = Logger.new(output = StringIO.new)

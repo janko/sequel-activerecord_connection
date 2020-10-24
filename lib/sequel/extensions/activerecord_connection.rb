@@ -13,7 +13,6 @@ module Sequel
 
     def self.extended(db)
       db.activerecord_model = ActiveRecord::Base
-      db.timezone = ActiveRecord::Base.default_timezone
 
       begin
         require "sequel/extensions/activerecord_connection/#{db.adapter_scheme}"
@@ -38,6 +37,11 @@ module Sequel
     # Log executed queries into Active Record logger as well.
     def log_connection_yield(sql, *)
       activerecord_log(sql) { super }
+    end
+
+    # Match database timezone with Active Record.
+    def timezone
+      @timezone || ActiveRecord::Base.default_timezone
     end
 
     private
