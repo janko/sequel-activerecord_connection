@@ -15,7 +15,9 @@ module Sequel
         super do |conn|
           conn.extended_result_codes = true if conn.respond_to?(:extended_result_codes=)
 
-          yield conn
+          Utils.set_value(conn, :results_as_hash, nil) do
+            yield conn
+          end
         end
       end
     end

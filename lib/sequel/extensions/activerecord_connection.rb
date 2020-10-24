@@ -113,6 +113,16 @@ module Sequel
     def activerecord_log(sql, &block)
       ActiveSupport::Notifications.instrument("sql.active_record", sql: sql, name: "Sequel", &block)
     end
+
+    module Utils
+      def self.set_value(object, name, new_value)
+        original_value = object.send(name)
+        object.send(:"#{name}=", new_value)
+        yield
+      ensure
+        object.send(:"#{name}=", original_value)
+      end
+    end
   end
 
   Database.register_extension(:activerecord_connection, ActiveRecordConnection)

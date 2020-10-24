@@ -1,5 +1,11 @@
 require "bundler/setup"
 
+if RUBY_VERSION >= "2.4"
+  require "warning"
+  Warning.ignore(:missing_ivar, Gem::Specification.find_by_name("sequel").load_paths.first)
+  Warning.ignore(/rb_tainted_str_new_cstr is deprecated/)
+end
+
 require "minitest/autorun"
 require "minitest/pride"
 
@@ -61,7 +67,7 @@ class Minitest::Test
   def teardown
     ActiveRecord::Base.remove_connection
     ActiveRecord::Base.default_timezone = :utc # reset default setting
-    Sequel::DATABASES.delete(@db)
+    Sequel::DATABASES.delete(@db) if defined?(@db)
   end
 
   def assert_logged(content)
@@ -76,7 +82,7 @@ class Minitest::Test
   end
 
   def activerecord_connect(**options)
-    ActiveRecord::Base.establish_connection(**options)
+    ActiveRecord::Base.establish_connection(options)
     ActiveRecord::Base.connection.disable_lazy_transactions! if ActiveRecord::VERSION::MAJOR >= 6
   end
 end

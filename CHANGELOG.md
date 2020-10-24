@@ -1,5 +1,7 @@
 ## HEAD
 
+* Avoid using deprecated `sqlite3` API in SQLite adapter (@janko)
+
 * Allow using any external Active Record adapters (@janko)
 
 * Avoid potential bugs when converting Active Record exceptions into Sequel exceptions (@janko)

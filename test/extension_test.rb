@@ -606,7 +606,7 @@ describe "General adapter" do
       @db.logger = Logger.new(output = StringIO.new)
       @db.run "SELECT 1"
 
-      assert_match /SELECT 1/, output.string
+      assert_match(/SELECT 1/, output.string)
     end
   end
 
