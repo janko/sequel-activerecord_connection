@@ -74,13 +74,17 @@ ActiveRecord adapters, just make sure to initialize the corresponding Sequel
 adapter before loading the extension.
 
 ```rb
-DB = Sequel.postgres(extensions: :activerecord_connection) # for "postgresql" adapter
-# or
-DB = Sequel.mysql2(extensions: :activerecord_connection) # for "mysql2" adapter
-# or
-DB = Sequel.sqlite(extensions: :activerecord_connection) # for "sqlite3" adapter
-# or
-DB = Sequel.jdbc(extensions: :activerecord_connection) # for JDBC adapter
+Sequel.postgres(extensions: :activerecord_connection) # for "postgresql" adapter
+Sequel.mysql2(extensions: :activerecord_connection)   # for "mysql2" adapter
+Sequel.sqlite(extensions: :activerecord_connection)   # for "sqlite3" adapter
+```
+
+If you're on JRuby, you should be using the JDBC adapters:
+
+```rb
+Sequel.connect("jdbc:postgresql://", extensions: :activerecord_connection) # for "jdbcpostgresql" adapter
+Sequel.connect("jdbc:mysql://", extensions: :activerecord_connection)      # for "jdbcmysql" adapter
+Sequel.connect("jdbc:sqlite://", extensions: :activerecord_connection)     # for "jdbcsqlite3" adapter
 ```
 
 ### Transactions
