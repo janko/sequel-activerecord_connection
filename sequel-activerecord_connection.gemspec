@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activerecord", ">= 4.2", "< 7"
 
   spec.add_development_dependency "minitest"
+  spec.add_development_dependency "warning" if RUBY_VERSION >= "2.4"
 
   spec.files         = Dir["README.md", "LICENSE.txt", "CHANGELOG.md", "lib/**/*.rb", "*.gemspec"]
   spec.require_paths = ["lib"]

@@ -3,7 +3,6 @@ source "https://rubygems.org"
 gemspec
 
 gem "rake", "~> 12.0"
-gem "warning" if RUBY_VERSION >= "2.4"
 
 platform :mri do
   gem "pg",      "~> 1.0"
