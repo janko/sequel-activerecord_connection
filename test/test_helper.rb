@@ -3,7 +3,8 @@ require "bundler/setup"
 if RUBY_VERSION >= "2.4"
   require "warning"
   Warning.ignore(:missing_ivar, Gem::Specification.find_by_name("sequel").load_paths.first)
-  Warning.ignore(/rb_tainted_str_new_cstr is deprecated/)
+  Warning.ignore(/Capturing the given block using Proc\.new is deprecated/, Gem::Specification.find_by_name("activesupport").load_paths.first)
+  Warning.ignore(/rb_(tainted_str_new(_cstr)?|check_safe_obj) is deprecated/)
 end
 
 require "minitest/autorun"
