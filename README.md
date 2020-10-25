@@ -18,8 +18,8 @@ possible. That being said, this implementation passes Rodauth's test suite
 
 Add this line to your application's Gemfile:
 
-```ruby
-gem "sequel-activerecord_connection", "~> 0.3"
+```rb
+gem "sequel-activerecord_connection", "~> 1.0"
 ```
 
 And then execute:
