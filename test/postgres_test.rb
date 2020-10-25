@@ -83,9 +83,16 @@ describe "postgres connection" do
 
     assert_equal record_id, record[:id]
 
-    assert_logged <<-SQL.strip_heredoc
-      SELECT * FROM "records" WHERE ("col" = $1) LIMIT 1; ["foo"]
-    SQL
+    if RUBY_ENGINE == "jruby"
+      assert_logged <<-SQL.strip_heredoc
+        PREPARE SELECT * FROM "records" WHERE ("col" = ?) LIMIT 1
+        EXECUTE; ["foo"]
+      SQL
+    else
+      assert_logged <<-SQL.strip_heredoc
+        SELECT * FROM "records" WHERE ("col" = $1) LIMIT 1; ["foo"]
+      SQL
+    end
   end
 
   it "supports prepared statements" do
@@ -98,10 +105,17 @@ describe "postgres connection" do
 
     assert_equal record_id, record[:id]
 
-    assert_logged <<-SQL.strip_heredoc
-      PREPARE first_by_col AS SELECT * FROM "records" WHERE ("col" = $1) LIMIT 1
-      EXECUTE first_by_col; ["foo"]
-    SQL
+    if RUBY_ENGINE == "jruby"
+      assert_logged <<-SQL.strip_heredoc
+        PREPARE first_by_col: SELECT * FROM "records" WHERE ("col" = ?) LIMIT 1
+        EXECUTE first_by_col; ["foo"]
+      SQL
+    else
+      assert_logged <<-SQL.strip_heredoc
+        PREPARE first_by_col AS SELECT * FROM "records" WHERE ("col" = $1) LIMIT 1
+        EXECUTE first_by_col; ["foo"]
+      SQL
+    end
   end
 
   it "raises Sequel exceptions" do
