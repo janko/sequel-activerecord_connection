@@ -221,5 +221,5 @@ describe "postgres connection" do
     end
 
     assert_equal 0, statement_cache.length
-  end if defined?(ActiveRecord::PreparedStatementCacheExpired)
+  end unless !defined?(ActiveRecord::PreparedStatementCacheExpired) || RUBY_ENGINE == "jruby"
 end
