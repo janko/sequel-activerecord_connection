@@ -1,4 +1,4 @@
-## HEAD
+## 1.0.0 (2020-10-25)
 
 * Clear AR statement cache on `ActiveRecord::PreparedStatementCacheExpired` when Sequel holds the transaction (@janko)
 
