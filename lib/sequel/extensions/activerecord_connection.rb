@@ -115,7 +115,13 @@ module Sequel
     end
 
     def activerecord_log(sql, &block)
-      ActiveSupport::Notifications.instrument("sql.active_record", sql: sql, name: "Sequel", &block)
+      ActiveSupport::Notifications.instrument(
+        "sql.active_record",
+        sql:        sql,
+        name:       "Sequel",
+        connection: activerecord_connection,
+        &block
+      )
     end
 
     module Utils
