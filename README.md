@@ -1,18 +1,16 @@
 # Sequel::ActiveRecordConnection
 
 This is an extension for [Sequel] that allows it to reuse an existing
-ActiveRecord connection for database interaction. It works on ActiveRecord 4.2
-or higher, and supports the built-in `postgresql`, `mysql2` and `sqlite3`
-adapters, as well as JDBC adapter for JRuby.
+ActiveRecord connection for database interaction.
 
 This can be useful if you're using a library that uses Sequel for database
 interaction (e.g. [Rodauth]), but you want to avoid creating a separate
 database connection. Or if you're transitioning from ActiveRecord to Sequel,
 and want the database connection to be shared.
 
-Note that this is a best-effort implementation, so some discrepancies are still
-possible. That being said, this implementation passes Rodauth's test suite
-(for all adapters), which has some fairly advanced Sequel usage.
+It works on ActiveRecord 4.2+ and fully supports PostgresSQL, MySQL and SQLite
+adapters, both the native ones and JDBC (JRuby). Other adapters might work too,
+but their integration hasn't been tested.
 
 ## Installation
 
