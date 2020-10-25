@@ -85,6 +85,10 @@ describe "mysql2 connection" do
       .call(:first, c: "foo")
 
     assert_equal record_id, record[:id]
+
+    assert_logged <<-SQL.strip_heredoc
+      SELECT * FROM `records` WHERE (`col` = ?) LIMIT 1; ["foo"]
+    SQL
   end
 
   it "supports prepared statements" do
@@ -96,6 +100,10 @@ describe "mysql2 connection" do
       .call(c: "foo")
 
     assert_equal record_id, record[:id]
+
+    assert_logged <<-SQL.strip_heredoc
+      SELECT * FROM `records` WHERE (`col` = ?) LIMIT 1; ["foo"]
+    SQL
   end
 
   it "raises Sequel exceptions" do

@@ -35,7 +35,9 @@ module Sequel
     end
 
     # Log executed queries into Active Record logger as well.
-    def log_connection_yield(sql, *)
+    def log_connection_yield(sql, conn, args = nil)
+      sql += "; #{args.inspect}" if args
+
       activerecord_log(sql) { super }
     end
 

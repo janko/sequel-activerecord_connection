@@ -82,6 +82,10 @@ describe "postgres connection" do
       .call(:first, c: "foo")
 
     assert_equal record_id, record[:id]
+
+    assert_logged <<-SQL.strip_heredoc
+      SELECT * FROM "records" WHERE ("col" = $1) LIMIT 1; ["foo"]
+    SQL
   end
 
   it "supports prepared statements" do
@@ -93,6 +97,11 @@ describe "postgres connection" do
       .call(c: "foo")
 
     assert_equal record_id, record[:id]
+
+    assert_logged <<-SQL.strip_heredoc
+      PREPARE first_by_col AS SELECT * FROM "records" WHERE ("col" = $1) LIMIT 1
+      EXECUTE first_by_col; ["foo"]
+    SQL
   end
 
   it "raises Sequel exceptions" do

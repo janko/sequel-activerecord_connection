@@ -82,6 +82,10 @@ describe "sqlite3 connection" do
       .call(:first, c: "foo")
 
     assert_equal record_id, record[:id]
+
+    assert_logged <<-SQL.strip_heredoc
+      SELECT * FROM `records` WHERE (`col` = :c) LIMIT 1; {"c"=>"foo"}
+    SQL
   end
 
   it "supports prepared statements" do
@@ -93,6 +97,11 @@ describe "sqlite3 connection" do
       .call(c: "foo")
 
     assert_equal record_id, record[:id]
+
+    assert_logged <<-SQL.strip_heredoc
+      PREPARE first_by_col: SELECT * FROM `records` WHERE (`col` = :c) LIMIT 1
+      EXECUTE first_by_col; {"c"=>"foo"}
+    SQL
   end
 
   it "raises Sequel exceptions" do
