@@ -93,7 +93,6 @@ module Sequel
 
     def rollback_transaction(conn, opts = OPTS)
       activerecord_connection.rollback_transaction
-      activerecord_connection.transaction_manager.send(:after_failure_actions, activerecord_connection.current_transaction, $!) if activerecord_connection.transaction_manager.respond_to?(:after_failure_actions)
     end
 
     def add_transaction_hook(conn, type, block)

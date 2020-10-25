@@ -206,4 +206,20 @@ describe "postgres connection" do
       @db.copy_table(@db[:records])
     end
   end unless RUBY_ENGINE == "jruby"
+
+  it "clears Active Record statement cache on ActiveRecord::PreparedStatementCacheExpired" do
+    statement_cache = ActiveRecord::Base.connection.instance_variable_get(:@statements)
+
+    model = Class.new(ActiveRecord::Base)
+    model.table_name = :records
+    model.find(@db[:records].insert({ col: "foo" }))
+
+    assert_equal 1, statement_cache.length
+
+    assert_raises ActiveRecord::PreparedStatementCacheExpired do
+      @db.transaction { raise ActiveRecord::PreparedStatementCacheExpired }
+    end
+
+    assert_equal 0, statement_cache.length
+  end if defined?(ActiveRecord::PreparedStatementCacheExpired)
 end

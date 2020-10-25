@@ -1,5 +1,7 @@
 ## HEAD
 
+* Clear AR statement cache on `ActiveRecord::PreparedStatementCacheExpired` when Sequel holds the transaction (@janko)
+
 * Pick up `ActiveRecord::Base.default_timezone` being changed on runtime (@janko)
 
 * Support prepared statements and bound variables in all adapters (@janko)

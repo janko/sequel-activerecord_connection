@@ -21,6 +21,9 @@ module Sequel
         end
 
         super
+      rescue => e
+        activerecord_connection.clear_cache! if e.class.name == "ActiveRecord::PreparedStatementCacheExpired" && !in_transaction?
+        raise
       end
 
       # Copy-pasted from Sequel::Postgres::Adapter.
