@@ -1,4 +1,4 @@
-# Sequel::ActiveRecordConnection
+# sequel-activerecord_connection
 
 This is an extension for [Sequel] that allows it to reuse an existing
 ActiveRecord connection for database interaction.
