@@ -33,6 +33,47 @@ describe "General extension" do
         COMMIT
       SQL
     end if ActiveRecord::VERSION::MAJOR >= 6
+
+    it "is re-entrant" do
+      @db.synchronize do |conn1|
+        @db.synchronize do |conn2|
+          assert_equal conn1, conn2
+          conn2.execute "SELECT 1"
+        end
+      end
+
+      assert_logged <<-SQL.strip_heredoc
+        SELECT 1
+      SQL
+    end
+
+    it "doesn't allow parallel access for the same connection" do
+      ActiveRecord::Base.connection_pool.lock_thread = Thread.current
+
+      q1 = Queue.new
+      q2 = Queue.new
+
+      thread1 = Thread.new do
+        @db.synchronize do
+          q1.pop
+        end
+      end
+
+      nil until thread1.status == "sleep" # waiting on Queue#pop
+
+      thread2 = Thread.new do
+        @db.synchronize do
+          q2.push "x"
+        end
+      end
+
+      nil until thread2.status == "sleep" # waiting on AR lock
+
+      q1.push "x"
+      q2.pop
+
+      [thread1, thread2].each(&:join)
+    end unless ActiveRecord.version < Gem::Version.new("5.1.0")
   end
 
   describe "#transaction" do

@@ -31,7 +31,9 @@ module Sequel
 
     # Avoid calling Sequel's connection pool, instead use Active Record's.
     def synchronize(*)
-      yield activerecord_connection.raw_connection
+      activerecord_lock do
+        yield activerecord_connection.raw_connection
+      end
     end
 
     # Log executed queries into Active Record logger as well.
@@ -109,6 +111,19 @@ module Sequel
       end
 
       super
+    end
+
+    # Active Record doesn't guarantee that a single connection can only be used
+    # by one thread at a time, so we need to use locking, which is what Active
+    # Record does internally as well.
+    def activerecord_lock
+      return yield if ActiveRecord.version < Gem::Version.new("5.1.0")
+
+      activerecord_connection.lock.synchronize do
+        ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+          yield
+        end
+      end
     end
 
     def activerecord_connection
