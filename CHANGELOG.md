@@ -1,4 +1,4 @@
-## HEAD
+## 1.0.1 (2020-10-28)
 
 * Use Active Record connection lock in `Database#synchronize` (@janko)
 
