@@ -32,7 +32,7 @@ describe "General extension" do
         BEGIN
         COMMIT
       SQL
-    end if ActiveRecord::VERSION::MAJOR >= 6
+    end if ActiveRecord.version >= Gem::Version.new("6.0")
 
     it "is re-entrant" do
       @db.synchronize do |conn1|

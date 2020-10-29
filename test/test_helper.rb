@@ -84,6 +84,6 @@ class Minitest::Test
 
   def activerecord_connect(**options)
     ActiveRecord::Base.establish_connection(options)
-    ActiveRecord::Base.connection.disable_lazy_transactions! if ActiveRecord::VERSION::MAJOR >= 6
+    ActiveRecord::Base.connection.disable_lazy_transactions! if ActiveRecord.version >= Gem::Version.new("6.0")
   end
 end
