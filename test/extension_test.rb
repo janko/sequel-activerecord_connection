@@ -38,7 +38,7 @@ describe "General extension" do
       @db.synchronize do |conn1|
         @db.synchronize do |conn2|
           assert_equal conn1, conn2
-          conn2.execute "SELECT 1"
+          @db.run "SELECT 1"
         end
       end
 
