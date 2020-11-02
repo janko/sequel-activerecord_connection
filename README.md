@@ -40,7 +40,7 @@ appropriate Sequel adapter and load the `activerecord_connection` extension:
 ```rb
 require "sequel"
 
-DB = Sequel.postgres(extensions: :activerecord_connection)
+DB = Sequel.postgres(extensions: :activerecord_connection, test: false)
 ```
 
 Now any Sequel operations that you make will internaly be done using the
