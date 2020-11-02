@@ -163,7 +163,11 @@ describe "sqlite3 connection" do
 
     @db[:records].insert(time: time)
 
-    assert_equal time, @db[:records].first[:time]
+    inserted_time = @db[:records].first[:time]
+    # locally on jdbc/sqlite the timestamp gets returned as a String
+    inserted_time = @db.to_application_timestamp(inserted_time) if inserted_time.is_a?(String)
+
+    assert_equal time, inserted_time
 
     assert_logged <<-SQL.strip_heredoc
       INSERT INTO `records` (`time`) VALUES ('2020-04-26 00:00:00.000000')
