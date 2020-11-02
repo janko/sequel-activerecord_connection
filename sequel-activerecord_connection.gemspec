@@ -14,6 +14,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "sequel", "~> 5.16"
   spec.add_dependency "activerecord", ">= 4.2", "< 7"
 
+  spec.add_development_dependency "sequel", "~> 5.38"
   spec.add_development_dependency "minitest"
   spec.add_development_dependency "warning" if RUBY_VERSION >= "2.4"
 
