@@ -4,9 +4,9 @@ This is an extension for [Sequel] that allows it to reuse an existing
 ActiveRecord connection for database interaction.
 
 This can be useful if you're using a library that uses Sequel for database
-interaction (e.g. [Rodauth]), but you want to avoid creating a separate
-database connection. Or if you're transitioning from ActiveRecord to Sequel,
-and want the database connection to be shared.
+interaction (e.g. [Rodauth] or [rom-sql]), but you want to avoid creating a
+separate database connection. Or if you're transitioning from ActiveRecord to
+Sequel, and want the database connection to be shared.
 
 It works on ActiveRecord 4.2+ and fully supports PostgresSQL, MySQL and SQLite
 adapters, both the native ones and JDBC (JRuby). Other adapters might work too,
@@ -183,3 +183,4 @@ Everyone interacting in this project's codebases, issue trackers, chat rooms and
 
 [Sequel]: https://github.com/jeremyevans/sequel
 [Rodauth]: https://github.com/jeremyevans/rodauth
+[rom-sql]: https://github.com/rom-rb/rom-sql
