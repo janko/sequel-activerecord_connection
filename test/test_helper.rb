@@ -19,11 +19,18 @@ require "active_support/core_ext/string"
 
 class Minitest::Test
   def connect_postgresql
+    options = {}
+
+    if ENV["CI"]
+      options.merge!(username: "postgres")
+    else
+      options.merge!(username: "sequel_activerecord_connection", password: "sequel_activerecord_connection")
+    end
+
     activerecord_connect(
       adapter:  "postgresql",
       database: "sequel_activerecord_connection",
-      **(ENV["CI"] ? { username: "postgres" }
-                   : { username: "sequel_activerecord_connection", password: "sequel_activerecord_connection" })
+      **options
     )
 
     @db = Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}postgresql://",
@@ -31,12 +38,23 @@ class Minitest::Test
   end
 
   def connect_mysql2
+    options = {}
+
+    if ENV["CI"]
+      options.merge!(username: "root")
+    else
+      options.merge!(username: "sequel_activerecord_connection", password: "sequel_activerecord_connection")
+    end
+
+    if RUBY_ENGINE == "jruby"
+      options.merge!(properties: { serverTimezone: java.util.TimeZone.getDefault.getID })
+    end
+
     activerecord_connect(
       adapter:  "mysql2",
       host:     "localhost",
       database: "sequel_activerecord_connection",
-      **(ENV["CI"] ? { username: "root" }
-                   : { username: "sequel_activerecord_connection", password: "sequel_activerecord_connection" })
+      **options
     )
 
     @db = Sequel.connect (RUBY_ENGINE == "jruby" ? "jdbc:mysql://" : "mysql2://"),
