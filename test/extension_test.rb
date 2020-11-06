@@ -12,6 +12,28 @@ describe "General extension" do
     end
   end
 
+  describe ".connect" do
+    it "doesn't test the connection by default" do
+      ActiveRecord::Base.establish_connection(
+        adapter:  "postgresql",
+        database: "nonexistent",
+      )
+
+      Sequel.postgres(extensions: :activerecord_connection, keep_reference: false)
+    end
+
+    it "allows testing the connection" do
+      ActiveRecord::Base.establish_connection(
+        adapter:  "postgresql",
+        database: "nonexistent",
+      )
+
+      assert_raises ActiveRecord::NoDatabaseError do
+        Sequel.postgres(extensions: :activerecord_connection, keep_reference: false, test: true)
+      end
+    end
+  end
+
   describe "#synchronize" do
     it "returns the underlying connection object" do
       conn = @db.synchronize { |conn| conn }

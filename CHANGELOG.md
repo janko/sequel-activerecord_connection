@@ -1,3 +1,7 @@
+## HEAD
+
+* Don't test the connection on `Sequel.connect` by default (@janko)
+
 ## 1.0.1 (2020-10-28)
 
 * Use Active Record connection lock in `Database#synchronize` (@janko)

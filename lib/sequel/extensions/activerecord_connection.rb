@@ -13,6 +13,7 @@ module Sequel
 
     def self.extended(db)
       db.activerecord_model = ActiveRecord::Base
+      db.opts[:test] = false unless db.opts.key?(:test)
 
       begin
         require "sequel/extensions/activerecord_connection/#{db.adapter_scheme}"
