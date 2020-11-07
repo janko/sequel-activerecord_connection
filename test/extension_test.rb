@@ -19,7 +19,9 @@ describe "General extension" do
         database: "nonexistent",
       )
 
-      Sequel.postgres(extensions: :activerecord_connection, keep_reference: false)
+      Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}postgresql://",
+        extensions:     :activerecord_connection,
+        keep_reference: false
     end
 
     it "allows testing the connection" do
@@ -29,7 +31,10 @@ describe "General extension" do
       )
 
       assert_raises ActiveRecord::NoDatabaseError do
-        Sequel.postgres(extensions: :activerecord_connection, keep_reference: false, test: true)
+        Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}postgresql://",
+          extensions:     :activerecord_connection,
+          keep_reference: false,
+          test:           true
       end
     end
   end
