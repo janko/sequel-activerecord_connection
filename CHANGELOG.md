@@ -1,5 +1,7 @@
 ## HEAD
 
+* Drop support for Ruby 2.2 (@janko)
+
 * Support transaction/savepoint hooks even when Active Record holds the transaction/savepoint (@janko)
 
 * Don't test the connection on `Sequel.connect` by default (@janko)
