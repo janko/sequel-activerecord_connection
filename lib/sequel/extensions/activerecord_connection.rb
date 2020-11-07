@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "after_commit_everywhere"
+
 module Sequel
   module ActiveRecordConnection
     Error = Class.new(Sequel::Error)
@@ -10,6 +12,8 @@ module Sequel
       repeatable:   :repeatable_read,
       serializable: :serializable,
     }
+
+    ACTIVE_RECORD_HOOKS = Object.new.extend(AfterCommitEverywhere)
 
     def self.extended(db)
       db.activerecord_model = ActiveRecord::Base
@@ -98,20 +102,28 @@ module Sequel
       activerecord_connection.rollback_transaction
     end
 
+    # When Active Record holds the transaction, we cannot use Sequel hooks,
+    # because Sequel doesn't have knowledge of when the transaction is
+    # committed. So in this case we register an Active Record hook using the
+    # after_commit_everywhere gem.
     def add_transaction_hook(conn, type, block)
       if _trans(conn)[:activerecord]
-        fail Error, "cannot add transaction hook when ActiveRecord holds the outer transaction"
+        ACTIVE_RECORD_HOOKS.public_send(type, &block)
+      else
+        super
       end
-
-      super
     end
 
+    # When Active Record holds the savepoint, we cannot use Sequel hooks,
+    # because Sequel doesn't have knowledge of when the savepoint is
+    # released. So in this case we register an Active Record hook using the
+    # after_commit_everywhere gem.
     def add_savepoint_hook(conn, type, block)
       if _trans(conn)[:savepoints].last[:activerecord]
-        fail Error, "cannot add savepoint hook when ActiveRecord holds the current savepoint"
+        ACTIVE_RECORD_HOOKS.public_send(type, &block)
+      else
+        super
       end
-
-      super
     end
 
     # Active Record doesn't guarantee that a single connection can only be used

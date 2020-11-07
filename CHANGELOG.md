@@ -1,5 +1,7 @@
 ## HEAD
 
+* Support transaction/savepoint hooks even when Active Record holds the transaction/savepoint (@janko)
+
 * Don't test the connection on `Sequel.connect` by default (@janko)
 
 ## 1.0.1 (2020-10-28)

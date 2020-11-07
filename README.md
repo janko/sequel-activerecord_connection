@@ -109,31 +109,70 @@ DB.transaction(isolation: :serializable) do
 end
 ```
 
-One caveat to keep in mind is that using Sequel's transaction/savepoint hooks
-currently don't work if ActiveRecord holds the corresponding
-transaction/savepoint. This is because it's difficult to be notified when
-ActiveRecord commits or rolls back the transaction/savepoint.
+When combining Active Record and Sequel transactions, Sequel transaction hook
+functionality will be utilized when possible.
 
 ```rb
-DB.transaction do
-  DB.after_commit { ... } # will get executed
-end
-
-DB.transaction do
-  DB.transaction(savepoint: true) do
-    DB.after_commit(savepoint: true) { ... } # will get executed
-  end
-end
-
-ActiveRecord::Base.transaction do
-  DB.after_commit { ... } # not allowed (will raise Sequel::ActiveRecordConnection::Error)
-end
-
+# Sequel: An after_commit transaction hook will always get executed if the outer
+# transaction commits, even if it's added inside a savepoint that's rolled back.
 DB.transaction do
   ActiveRecord::Base.transaction(requires_new: true) do
-    DB.after_commit(savepoint: true) { ... } # not allowed (will raise Sequel::ActiveRecordConnection::Error)
+    DB.after_commit { puts "after commit" }
+    raise ActiveRecord::Rollback
   end
 end
+#>> BEGIN
+#>> SAVEPOINT active_record_1
+#>> ROLLBACK TO SAVEPOINT active_record_1
+#>> COMMIT
+#>> after commit
+
+# Sequel: An after_commit savepoint hook will get executed only after the outer
+# transaction commits, given that all enclosing savepoints have been released.
+DB.transaction(auto_savepoint: true) do
+  DB.transaction do
+    DB.after_commit(savepoint: true) { puts "after commit" }
+    raise Sequel::Rollback
+  end
+end
+#>> BEGIN
+#>> SAVEPOINT active_record_1
+#>> RELEASE SAVEPOINT active_record_1
+#>> COMMIT
+#>> after commit
+```
+
+In case of (a) adding a transaction hook while Active Record holds the
+transaction, or (b) adding a savepoint hook when Active Record holds any
+enclosing savepoint, Active Record transaction callbacks will be used instead
+of Sequel hooks, which have slightly different behaviour in some circumstances.
+
+```rb
+# ActiveRecord: An after_commit transaction callback is not executed if any
+# if the enclosing savepoints have been rolled back
+ActiveRecord::Base.transaction do
+  DB.transaction(savepoint: true) do
+    DB.after_commit { puts "after commit" }
+    raise Sequel::Rollback
+  end
+end
+#>> BEGIN
+#>> SAVEPOINT active_record_1
+#>> ROLLBACK TO SAVEPOINT active_record_1
+#>> COMMIT
+
+# ActiveRecord: An after_commit transaction callback can be executed already
+# after a savepoint is released, if the enclosing transaction is not joinable.
+ActiveRecord::Base.transaction(joinable: false) do
+  DB.transaction do
+    DB.after_commit { puts "after commit" }
+  end
+end
+#>> BEGIN
+#>> SAVEPOINT active_record_1
+#>> RELEASE SAVEPOINT active_record_1
+#>> after commit
+#>> COMMIT
 ```
 
 ### Model

@@ -473,6 +473,51 @@ describe "General extension" do
       assert after_commit_called
     end
 
+    it "supports transaction hooks when Active Record holds the transaction" do
+      after_commit_called = false
+      ActiveRecord::Base.transaction do
+        @db.after_commit { after_commit_called = true }
+        refute after_commit_called
+      end
+      assert after_commit_called
+
+      after_commit_called = false
+      ActiveRecord::Base.transaction(joinable: false) do
+        @db.transaction do
+          @db.after_commit { after_commit_called = true }
+          refute after_commit_called
+        end
+        assert after_commit_called
+      end
+
+      after_commit_called = false
+      ActiveRecord::Base.transaction(joinable: false) do
+        ActiveRecord::Base.transaction do
+          @db.after_commit { after_commit_called = true }
+          refute after_commit_called
+        end
+        assert after_commit_called
+      end
+
+      after_commit_called = false
+      ActiveRecord::Base.transaction do
+        @db.transaction(savepoint: true) do
+          @db.after_commit { after_commit_called = true }
+        end
+        refute after_commit_called
+      end
+      assert after_commit_called
+
+      after_commit_called = false
+      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.transaction(requires_new: true) do
+          @db.after_commit { after_commit_called = true }
+        end
+        refute after_commit_called
+      end
+      assert after_commit_called
+    end
+
     it "supports savepoint hooks" do
       after_commit_called = false
       @db.transaction do
@@ -504,20 +549,64 @@ describe "General extension" do
       assert after_commit_called
     end
 
-    it "disallows attempt to add hook to ActiveRecord transaction/savepoint" do
-      assert_raises Sequel::ActiveRecordConnection::Error do
-        ActiveRecord::Base.transaction do
-          @db.after_commit {}
+    it "supports savepoint hooks when Active Record holds the savepoint" do
+      after_commit_called = false
+      @db.transaction do
+        ActiveRecord::Base.transaction(requires_new: true) do
+          @db.after_commit(savepoint: true) { after_commit_called = true }
         end
+        refute after_commit_called
+      end
+      assert after_commit_called
+
+      after_commit_called = false
+      @db.transaction(auto_savepoint: true) do
+        ActiveRecord::Base.transaction do
+          @db.after_commit(savepoint: true) { after_commit_called = true }
+          refute after_commit_called
+        end
+        assert after_commit_called
       end
 
-      assert_raises Sequel::ActiveRecordConnection::Error do
-        @db.transaction do
-          ActiveRecord::Base.transaction(requires_new: true) do
-            @db.after_commit(savepoint: true) {}
+      after_commit_called = false
+      ActiveRecord::Base.transaction(joinable: false) do
+        ActiveRecord::Base.transaction do
+          @db.after_commit(savepoint: true) { after_commit_called = true }
+          refute after_commit_called
+        end
+        assert after_commit_called
+      end
+
+      after_commit_called = false
+      ActiveRecord::Base.transaction do
+        @db.transaction(savepoint: true) do
+          @db.after_commit(savepoint: true) { after_commit_called = true }
+        end
+        refute after_commit_called
+      end
+      assert after_commit_called
+
+      after_commit_called = false
+      @db.transaction do
+        ActiveRecord::Base.transaction(requires_new: true) do
+          @db.transaction(savepoint: true) do
+            @db.after_commit(savepoint: true) { after_commit_called = true }
           end
         end
+        refute after_commit_called
       end
+      assert after_commit_called
+
+      after_commit_called = false
+      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.transaction(requires_new: true) do
+          @db.transaction(savepoint: true) do
+            @db.after_commit(savepoint: true) { after_commit_called = true }
+          end
+        end
+        refute after_commit_called
+      end
+      assert after_commit_called
     end
   end
 
@@ -571,6 +660,36 @@ describe "General extension" do
       refute after_rollback_called
     end
 
+    it "supports transaction hooks when Active Record holds the transaction" do
+      after_rollback_called = false
+      ActiveRecord::Base.transaction do
+        @db.after_rollback { after_rollback_called = true }
+        refute after_rollback_called
+        raise ActiveRecord::Rollback
+      end
+      assert after_rollback_called
+
+      after_rollback_called = false
+      ActiveRecord::Base.transaction do
+        @db.transaction(savepoint: true) do
+          @db.after_rollback { after_rollback_called = true }
+          refute after_rollback_called
+          raise Sequel::Rollback
+        end
+        assert after_rollback_called
+      end
+
+      after_rollback_called = false
+      ActiveRecord::Base.transaction do
+        @db.transaction(savepoint: true) do
+          @db.after_rollback { after_rollback_called = true }
+        end
+        refute after_rollback_called
+        raise ActiveRecord::Rollback
+      end
+      assert after_rollback_called
+    end
+
     it "supports savepoint hooks" do
       after_rollback_called = false
       @db.transaction do
@@ -608,19 +727,55 @@ describe "General extension" do
       refute after_rollback_called
     end
 
-    it "disallows attempt to add hook to ActiveRecord transaction/savepoint" do
-      assert_raises Sequel::ActiveRecordConnection::Error do
-        ActiveRecord::Base.transaction do
-          @db.after_rollback { }
+    it "supports savepoint hooks when Active Record holds the savepoint" do
+      after_rollback_called = false
+      ActiveRecord::Base.transaction do
+        @db.after_rollback(savepoint: true) { after_rollback_called = true }
+        refute after_rollback_called
+        raise ActiveRecord::Rollback
+      end
+      assert after_rollback_called
+
+      after_rollback_called = false
+      @db.transaction do
+        ActiveRecord::Base.transaction(requires_new: true) do
+          @db.after_rollback(savepoint: true) { after_rollback_called = true }
+          refute after_rollback_called
+          raise ActiveRecord::Rollback
         end
+        assert after_rollback_called
       end
 
-      assert_raises Sequel::ActiveRecordConnection::Error do
-        @db.transaction do
-          ActiveRecord::Base.transaction(requires_new: true) do
-            @db.after_rollback(savepoint: true) { }
-          end
+      after_rollback_called = false
+      @db.transaction do
+        ActiveRecord::Base.transaction(requires_new: true) do
+          @db.after_rollback(savepoint: true) { after_rollback_called = true }
         end
+        refute after_rollback_called
+        raise Sequel::Rollback
+      end
+      assert after_rollback_called
+
+      after_rollback_called = false
+      ActiveRecord::Base.transaction do
+        @db.transaction(savepoint: true) do
+          @db.after_rollback(savepoint: true) { after_rollback_called = true }
+        end
+        refute after_rollback_called
+        raise ActiveRecord::Rollback
+      end
+      assert after_rollback_called
+
+      after_rollback_called = false
+      ActiveRecord::Base.transaction do
+        ActiveRecord::Base.transaction(requires_new: true) do
+          @db.transaction(savepoint: true) do
+            @db.after_rollback(savepoint: true) { after_rollback_called = true }
+          end
+          refute after_rollback_called
+          raise ActiveRecord::Rollback
+        end
+        assert after_rollback_called
       end
     end
   end
