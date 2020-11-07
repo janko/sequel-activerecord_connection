@@ -13,7 +13,7 @@ module Sequel
       serializable: :serializable,
     }
 
-    ACTIVE_RECORD_HOOKS = Object.new.extend(AfterCommitEverywhere)
+    ACTIVERECORD_CALLBACKS = Object.new.extend(AfterCommitEverywhere)
 
     def self.extended(db)
       db.activerecord_model = ActiveRecord::Base
@@ -108,7 +108,7 @@ module Sequel
     # after_commit_everywhere gem.
     def add_transaction_hook(conn, type, block)
       if _trans(conn)[:activerecord]
-        ACTIVE_RECORD_HOOKS.public_send(type, &block)
+        ACTIVERECORD_CALLBACKS.public_send(type, &block)
       else
         super
       end
@@ -120,7 +120,7 @@ module Sequel
     # after_commit_everywhere gem.
     def add_savepoint_hook(conn, type, block)
       if _trans(conn)[:savepoints].last[:activerecord]
-        ACTIVE_RECORD_HOOKS.public_send(type, &block)
+        ACTIVERECORD_CALLBACKS.public_send(type, &block)
       else
         super
       end
