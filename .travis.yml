@@ -21,6 +21,8 @@ matrix:
       gemfile: gemfiles/Gemfile.activerecord-6.0
     - rvm: 2.4
       gemfile: gemfiles/Gemfile.activerecord-6.0
+    - rvm: jruby-9.2.13.0
+      gemfile: gemfiles/Gemfile.activerecord-4.2
 
 before_script:
   - mysql -e 'create database sequel_activerecord_connection;'
