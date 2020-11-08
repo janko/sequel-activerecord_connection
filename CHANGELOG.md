@@ -1,4 +1,4 @@
-## HEAD
+## 1.1.0 (2020-11-08)
 
 * Drop support for Ruby 2.2 (@janko)
 
