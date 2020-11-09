@@ -110,7 +110,7 @@ end
 ```
 
 When registering transaction hooks, they will be registered on Sequel
-transactions when possible, and which case they will have behaviour described
+transactions when possible, in which case they will have behaviour described
 in the [Sequel docs][sequel transaction hooks].
 
 ```rb
