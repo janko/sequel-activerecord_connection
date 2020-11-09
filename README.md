@@ -110,8 +110,8 @@ end
 ```
 
 When registering transaction hooks, they will be registered on Sequel
-transactions when possible, in which case they will have behaviour described
-in the [Sequel docs][sequel transaction hooks].
+transactions when possible, in which case they will behave as described in the
+[Sequel docs][sequel transaction hooks].
 
 ```rb
 # Sequel: An after_commit transaction hook will always get executed if the outer
