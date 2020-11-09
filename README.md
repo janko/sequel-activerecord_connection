@@ -109,8 +109,9 @@ DB.transaction(isolation: :serializable) do
 end
 ```
 
-When combining Active Record and Sequel transactions, Sequel transaction hook
-functionality will be utilized when possible.
+When registering transaction hooks, they will be registered on Sequel
+transactions when possible, and which case they will have behaviour described
+in the [Sequel docs][sequel transaction hooks].
 
 ```rb
 # Sequel: An after_commit transaction hook will always get executed if the outer
@@ -223,3 +224,4 @@ Everyone interacting in this project's codebases, issue trackers, chat rooms and
 [Sequel]: https://github.com/jeremyevans/sequel
 [Rodauth]: https://github.com/jeremyevans/rodauth
 [rom-sql]: https://github.com/rom-rb/rom-sql
+[sequel transaction hooks]: http://sequel.jeremyevans.net/rdoc/files/doc/transactions_rdoc.html#label-Transaction+Hooks
