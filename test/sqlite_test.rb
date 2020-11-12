@@ -30,7 +30,7 @@ describe "sqlite3 connection" do
 
     assert_equal [:id, :col, :time], @db[:records].columns
 
-    assert_logged <<-SQL.strip_heredoc
+    assert_logged <<~SQL
       #{RUBY_ENGINE == "jruby" ? "BEGIN TRANSACTION" : "begin transaction"}
       INSERT INTO `records` (`col`) VALUES ('a'), ('b'), ('c')
       #{RUBY_ENGINE == "jruby" ? "COMMIT TRANSACTION" : "commit transaction"}
@@ -57,7 +57,7 @@ describe "sqlite3 connection" do
     assert_equal 2,   records[1][:id]
     assert_equal "z", records[1][:col]
 
-    assert_logged <<-SQL.strip_heredoc
+    assert_logged <<~SQL
       UPDATE `records` SET `col` = 'x' WHERE (`col` = 'c')
       UPDATE `records` SET `col` = 'y' WHERE (`col` = 'a')
       UPDATE `records` SET `col` = 'z'
@@ -68,7 +68,7 @@ describe "sqlite3 connection" do
     assert_equal 1,     @db.get(1)
     assert_equal "foo", @db.get("foo")
 
-    assert_logged <<-SQL.strip_heredoc
+    assert_logged <<~SQL
       SELECT 1 AS 'v' LIMIT 1
       SELECT 'foo' AS 'v' LIMIT 1
     SQL
@@ -84,12 +84,12 @@ describe "sqlite3 connection" do
     assert_equal record_id, record[:id]
 
     if RUBY_ENGINE == "jruby"
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         PREPARE SELECT * FROM `records` WHERE (`col` = ?) LIMIT 1
         EXECUTE; ["foo"]
       SQL
     else
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         SELECT * FROM `records` WHERE (`col` = :c) LIMIT 1; {"c"=>"foo"}
       SQL
     end
@@ -106,12 +106,12 @@ describe "sqlite3 connection" do
     assert_equal record_id, record[:id]
 
     if RUBY_ENGINE == "jruby"
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         PREPARE first_by_col: SELECT * FROM `records` WHERE (`col` = ?) LIMIT 1
         EXECUTE first_by_col; ["foo"]
       SQL
     else
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         PREPARE first_by_col: SELECT * FROM `records` WHERE (`col` = :c) LIMIT 1
         EXECUTE first_by_col; {"c"=>"foo"}
       SQL
@@ -143,7 +143,7 @@ describe "sqlite3 connection" do
 
     assert_equal time, @db[:records].first[:time]
 
-    assert_logged <<-SQL.strip_heredoc
+    assert_logged <<~SQL
       INSERT INTO `records` (`time`) VALUES ('2020-04-25 22:00:00.000000')
     SQL
   end
@@ -169,7 +169,7 @@ describe "sqlite3 connection" do
 
     assert_equal time, inserted_time
 
-    assert_logged <<-SQL.strip_heredoc
+    assert_logged <<~SQL
       INSERT INTO `records` (`time`) VALUES ('2020-04-26 00:00:00.000000')
     SQL
   end

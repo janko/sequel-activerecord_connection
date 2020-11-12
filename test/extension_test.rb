@@ -55,7 +55,7 @@ describe "General extension" do
 
       ActiveRecord::Base.transaction { @db.synchronize {} }
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         COMMIT
       SQL
@@ -69,7 +69,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         SELECT 1
       SQL
     end
@@ -109,7 +109,7 @@ describe "General extension" do
         assert_equal 1, ActiveRecord::Base.connection.open_transactions
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         COMMIT
       SQL
@@ -126,7 +126,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         COMMIT
       SQL
@@ -137,7 +137,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         COMMIT
       SQL
@@ -148,7 +148,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         COMMIT
       SQL
@@ -164,7 +164,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         RELEASE SAVEPOINT active_record_1
@@ -180,7 +180,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         RELEASE SAVEPOINT active_record_1
@@ -195,7 +195,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         RELEASE SAVEPOINT active_record_1
@@ -208,7 +208,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         RELEASE SAVEPOINT active_record_1
@@ -221,7 +221,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         RELEASE SAVEPOINT active_record_1
@@ -234,7 +234,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         COMMIT
       SQL
@@ -245,7 +245,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         COMMIT
       SQL
@@ -256,7 +256,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         ROLLBACK TO SAVEPOINT active_record_1
@@ -271,7 +271,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         RELEASE SAVEPOINT active_record_1
@@ -284,7 +284,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         RELEASE SAVEPOINT active_record_1
@@ -297,7 +297,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         RELEASE SAVEPOINT active_record_1
@@ -310,7 +310,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         ROLLBACK TO SAVEPOINT active_record_1
@@ -321,7 +321,7 @@ describe "General extension" do
     it "supports :rollback option" do
       @db.transaction(rollback: :always) { }
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         ROLLBACK
       SQL
@@ -332,7 +332,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         ROLLBACK
       SQL
@@ -346,7 +346,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SELECT 1
         ROLLBACK
@@ -358,7 +358,7 @@ describe "General extension" do
         raise Sequel::Rollback
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         ROLLBACK
       SQL
@@ -369,7 +369,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         ROLLBACK TO SAVEPOINT active_record_1
@@ -380,7 +380,7 @@ describe "General extension" do
     it "supports :isolation option" do
       @db.transaction(isolation: :uncommitted) { }
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
         COMMIT
@@ -388,7 +388,7 @@ describe "General extension" do
 
       @db.transaction(isolation: :committed) { }
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SET TRANSACTION ISOLATION LEVEL READ COMMITTED
         COMMIT
@@ -396,7 +396,7 @@ describe "General extension" do
 
       @db.transaction(isolation: :repeatable) { }
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
         COMMIT
@@ -404,7 +404,7 @@ describe "General extension" do
 
       @db.transaction(isolation: :serializable) { }
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
         COMMIT
@@ -795,7 +795,7 @@ describe "General extension" do
         @db.rollback_on_exit
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         ROLLBACK
       SQL
@@ -806,7 +806,7 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<-SQL.strip_heredoc
+      assert_logged <<~SQL
         BEGIN
         SAVEPOINT active_record_1
         ROLLBACK TO SAVEPOINT active_record_1
