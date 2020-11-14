@@ -1,3 +1,5 @@
+require_relative "utils"
+
 module Sequel
   module ActiveRecordConnection
     module Postgres
