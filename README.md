@@ -9,8 +9,10 @@ separate database connection. Or if you're transitioning from ActiveRecord to
 Sequel, and want the database connection to be shared.
 
 It works on ActiveRecord 4.2+ and fully supports PostgresSQL, MySQL and SQLite
-adapters, both the native ones and JDBC (JRuby). Other adapters might work too,
-but their integration hasn't been tested.
+adapters, both the native ones and JDBC (JRuby). There is attempted suppport
+for [Oracle enhanced] and [SQL Server] Active Record adapters (`oracle` and
+`tinytds` in Sequel). Other adapters might work too, but their integration
+hasn't been tested.
 
 ## Installation
 
@@ -225,3 +227,5 @@ Everyone interacting in this project's codebases, issue trackers, chat rooms and
 [Rodauth]: https://github.com/jeremyevans/rodauth
 [rom-sql]: https://github.com/rom-rb/rom-sql
 [sequel transaction hooks]: http://sequel.jeremyevans.net/rdoc/files/doc/transactions_rdoc.html#label-Transaction+Hooks
+[Oracle enhanced]: https://github.com/rsim/oracle-enhanced
+[SQL Server]: https://github.com/rails-sqlserver/activerecord-sqlserver-adapter
