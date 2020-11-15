@@ -9,7 +9,11 @@ module Sequel
 
       def synchronize(*)
         super do |conn|
-          yield conn.connection
+          if database_type == :oracle
+            yield conn.raw_connection
+          else
+            yield conn.connection
+          end
         end
       end
     end

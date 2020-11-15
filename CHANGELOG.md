@@ -1,3 +1,7 @@
+## HEAD
+
+* Attempt support for [oracle-enhanced](https://github.com/rsim/oracle-enhanced) Active Record adapter (@janko)
+
 ## 1.1.0 (2020-11-08)
 
 * Drop support for Ruby 2.2 (@janko)
