@@ -1,5 +1,7 @@
 ## HEAD
 
+* Attempt support for [activerecord-sqlserver-adapter](https://github.com/rails-sqlserver/activerecord-sqlserver-adapter) (@janko)
+
 * Attempt support for [oracle-enhanced](https://github.com/rsim/oracle-enhanced) Active Record adapter (@janko)
 
 ## 1.1.0 (2020-11-08)
