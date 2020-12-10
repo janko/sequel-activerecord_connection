@@ -32,20 +32,12 @@ module Sequel
       module ConnectionMethods
         # The underlying exception classes to reraise as disconnect errors
         # instead of regular database errors.
-        DISCONNECT_ERROR_CLASSES = [IOError, Errno::EPIPE, Errno::ECONNRESET, ::PG::ConnectionBad].freeze
+        DISCONNECT_ERROR_CLASSES = Sequel::Postgres::Adapter::DISCONNECT_ERROR_CLASSES
 
         # Since exception class based disconnect checking may not work,
         # also trying parsing the exception message to look for disconnect
         # errors.
-        DISCONNECT_ERROR_REGEX = /\A#{Regexp.union([
-          "ERROR:  cached plan must not change result type",
-          "could not receive data from server",
-          "no connection to the server",
-          "connection not open",
-          "connection is closed",
-          "terminating connection due to administrator command",
-          "PQconsumeInput() "
-         ])}/
+        DISCONNECT_ERROR_REGEX = Sequel::Postgres::Adapter::DISCONNECT_ERROR_RE
 
         def async_exec_params(sql, args)
           defined?(super) ? super : async_exec(sql, args)
