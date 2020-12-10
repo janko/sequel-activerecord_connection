@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ '**' ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:11.5
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        env:
+          POSTGRES_DB: sequel_activerecord_connection
+          POSTGRES_USER: sequel_activerecord_connection
+          POSTGRES_PASSWORD: sequel_activerecord_connection
+
+      mysql:
+        image: mysql:5.7
+        ports: ["3306:3306"]
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        env:
+          MYSQL_ROOT_PASSWORD: sequel_activerecord_connection
+          MYSQL_DATABASE: sequel_activerecord_connection
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["ruby-2.3", "ruby-2.4", "ruby-2.5", "ruby-2.6", "ruby-2.7", "jruby-9.2"]
+        gemfile: ["activerecord-4.2", "activerecord-5.0", "activerecord-5.1", "activerecord-5.2", "activerecord-6.0", "activerecord-6.1"]
+        exclude:
+          - ruby: "ruby-2.3"
+            gemfile: "activerecord-6.1"
+          - ruby: "ruby-2.4"
+            gemfile: "activerecord-6.1"
+          - ruby: "jruby-9.2"
+            gemfile: "activerecord-6.1"
+          - ruby: "ruby-2.3"
+            gemfile: "activerecord-6.0"
+          - ruby: "ruby-2.4"
+            gemfile: "activerecord-6.0"
+          - ruby: "ruby-2.7"
+            gemfile: "activerecord-4.2"
+          - ruby: "jruby-9.2"
+            gemfile: "activerecord-4.2"
+
+    env:
+      BUNDLE_GEMFILE: gemfiles/Gemfile.${{ matrix.gemfile }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Install database packages"
+        run: sudo apt-get -yqq install libpq-dev mysql-client libmysqlclient-dev
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run tests
+        run: bundle exec rake test
