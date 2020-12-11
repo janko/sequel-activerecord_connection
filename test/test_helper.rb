@@ -23,15 +23,15 @@ class Minitest::Test
     options = {}
 
     if ENV["CI"]
-      options.merge!(username: "postgres")
-    else
-      options.merge!(username: "sequel_activerecord_connection", password: "sequel_activerecord_connection")
+      options[:host] = "localhost"
     end
 
     activerecord_connect(
       adapter:  "postgresql",
       database: "sequel_activerecord_connection",
-      **options
+      username: "sequel_activerecord_connection",
+      password: "sequel_activerecord_connection",
+      **options,
     )
 
     @db = Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}postgresql://",
@@ -42,19 +42,20 @@ class Minitest::Test
     options = {}
 
     if ENV["CI"]
-      options.merge!(username: "root")
+      options[:username] = "root"
+      options[:host]     = "127.0.0.1"
     else
-      options.merge!(username: "sequel_activerecord_connection", password: "sequel_activerecord_connection")
+      options[:username] = "sequel_activerecord_connection"
     end
 
     if RUBY_ENGINE == "jruby"
-      options.merge!(properties: { serverTimezone: java.util.TimeZone.getDefault.getID })
+      options[:properties] = { serverTimezone: java.util.TimeZone.getDefault.getID }
     end
 
     activerecord_connect(
       adapter:  "mysql2",
-      host:     "localhost",
       database: "sequel_activerecord_connection",
+      password: "sequel_activerecord_connection",
       **options
     )
 
@@ -66,6 +67,8 @@ class Minitest::Test
     activerecord_connect(
       adapter: "sqlite3",
       database: ":memory:",
+      password: "sequel_activerecord_connection",
+      host:     "localhost",
     )
 
     @db = Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}sqlite://",
@@ -104,5 +107,13 @@ class Minitest::Test
   def activerecord_connect(**options)
     ActiveRecord::Base.establish_connection(options)
     ActiveRecord::Base.connection.disable_lazy_transactions! if ActiveRecord.version >= Gem::Version.new("6.0")
+  end
+
+  def activerecord_config
+    if ActiveRecord.version >= Gem::Version.new("6.1")
+      ActiveRecord::Base.connection_db_config.configuration_hash
+    else
+      ActiveRecord::Base.connection_config
+    end
   end
 end

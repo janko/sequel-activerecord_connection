@@ -14,10 +14,7 @@ describe "General extension" do
 
   describe ".connect" do
     it "doesn't test the connection by default" do
-      ActiveRecord::Base.establish_connection(
-        adapter:  "postgresql",
-        database: "nonexistent",
-      )
+      ActiveRecord::Base.establish_connection(**activerecord_config, database: "nonexistent")
 
       Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}postgresql://",
         extensions:     :activerecord_connection,
@@ -25,10 +22,7 @@ describe "General extension" do
     end
 
     it "allows testing the connection" do
-      ActiveRecord::Base.establish_connection(
-        adapter:  "postgresql",
-        database: "nonexistent",
-      )
+      ActiveRecord::Base.establish_connection(**activerecord_config, database: "nonexistent")
 
       assert_raises ActiveRecord::NoDatabaseError do
         Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}postgresql://",
