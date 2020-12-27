@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["ruby-2.3", "ruby-2.4", "ruby-2.5", "ruby-2.6", "ruby-2.7", "jruby-9.2"]
+        ruby: ["ruby-2.3", "ruby-2.4", "ruby-2.5", "ruby-2.6", "ruby-2.7", "ruby-3.0", "jruby-9.2"]
         gemfile: ["activerecord-4.2", "activerecord-5.0", "activerecord-5.1", "activerecord-5.2", "activerecord-6.0", "activerecord-6.1"]
         exclude:
           - ruby: "ruby-2.3"
