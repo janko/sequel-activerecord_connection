@@ -53,8 +53,6 @@ jobs:
           - ruby: "ruby-2.3"
             gemfile: "activerecord-6.0"
           - ruby: "jruby-9.2"
-            gemfile: "activerecord-6.1"
-          - ruby: "jruby-9.2"
             gemfile: "activerecord-4.2"
 
     env:
