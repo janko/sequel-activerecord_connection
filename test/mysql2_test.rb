@@ -167,20 +167,35 @@ describe "mysql2 connection" do
   it "restores original query options" do
     conn = @db.synchronize { |conn| conn }
 
-    assert_equal :array, conn.query_options[:as]
-    assert_equal false,  conn.query_options[:symbolize_keys]
-    assert_equal true,   conn.query_options[:cache_rows]
-
-    assert_raises(KeyError) { @db.synchronize { |conn| raise(KeyError) } }
+    @db.get(1)
 
     assert_equal :array, conn.query_options[:as]
     assert_equal false,  conn.query_options[:symbolize_keys]
     assert_equal true,   conn.query_options[:cache_rows]
 
-    conn = @db.synchronize { @db.synchronize { |conn| conn } }
+    assert_raises(Sequel::DatabaseError) { @db.get(Sequel.lit("invalid")) }
+
+    assert_equal :array, conn.query_options[:as]
+    assert_equal false,  conn.query_options[:symbolize_keys]
+    assert_equal true,   conn.query_options[:cache_rows]
+
+    @db.execute("SELECT 1") { @db.execute("SELECT 1") }
 
     assert_equal :array, conn.query_options[:as]
     assert_equal false,  conn.query_options[:symbolize_keys]
     assert_equal true,   conn.query_options[:cache_rows]
   end unless RUBY_ENGINE == "jruby"
+
+  it "allows calling Active Record queries inside transaction" do
+    activerecord_model = Class.new(ActiveRecord::Base)
+    activerecord_model.table_name = :records
+
+    @db.transaction do
+      record = activerecord_model.create(col: "foo", time: Time.new(2021, 1, 10))
+      record = activerecord_model.find(record.id)
+
+      assert_equal "foo",                 record.col
+      assert_equal Time.new(2021, 1, 10), record.time
+    end
+  end
 end unless ENV["CI"] && RUBY_VERSION < "2.4"
