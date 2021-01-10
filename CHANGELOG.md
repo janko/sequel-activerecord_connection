@@ -1,4 +1,4 @@
-## HEAD
+## 1.2.1 (2020-01-10)
 
 * Fix original mysql2 query options not being restored after nested `DB#synchronize` calls, e.g. when using Sequel transactions (@janko)
 
