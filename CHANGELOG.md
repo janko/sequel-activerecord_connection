@@ -1,3 +1,7 @@
+## HEAD
+
+* Fix original mysql2 query options not being restored after nested `DB#synchronize` calls, e.g. when using Sequel transactions (@janko)
+
 ## 1.2.0 (2020-11-15)
 
 * Attempt support for [activerecord-sqlserver-adapter](https://github.com/rails-sqlserver/activerecord-sqlserver-adapter) (@janko)
