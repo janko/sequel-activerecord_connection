@@ -95,10 +95,11 @@ class Minitest::Test
 
   def assert_logged(content)
     if RUBY_ENGINE == "jruby"
+      transaction = " TRANSACTION" if Gem::Version.new(ArJdbc::VERSION) < Gem::Version.new("61.0")
       content.gsub!(/BEGIN\nSET TRANSACTION ISOLATION LEVEL (.+)/) do
-        "BEGIN ISOLATED TRANSACTION - #{$1.downcase.tr(" ", "_")}"
+        "BEGIN ISOLATED#{transaction} - #{$1.downcase.tr(" ", "_")}"
       end
-      content.gsub!(/(BEGIN|COMMIT|ROLLBACK)$/, '\1 TRANSACTION')
+      content.gsub!(/(BEGIN|COMMIT|ROLLBACK)$/, "\\1#{transaction}")
     end
 
     assert_includes @log.read, content
