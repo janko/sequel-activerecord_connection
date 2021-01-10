@@ -169,6 +169,8 @@ describe "postgres connection" do
     SQL
   end
 
+  next if RUBY_ENGINE == "jruby"
+
   it "raises exception on unsupported transaction options" do
     assert_raises(Sequel::ActiveRecordConnection::Error) do
       @db.transaction(deferrable: true) { }
@@ -179,7 +181,7 @@ describe "postgres connection" do
     assert_raises(Sequel::ActiveRecordConnection::Error) do
       @db.transaction(synchronous: true) { }
     end
-  end unless RUBY_ENGINE == "jruby"
+  end
 
   it "supports #copy_table and #copy_into" do
     @db.copy_into(:records, format: "csv", data: ["1,foo,2021-01-10 T00:00:00"])
@@ -195,7 +197,7 @@ describe "postgres connection" do
     assert_logged <<~SQL
       COPY "records" TO STDOUT (FORMAT csv)
     SQL
-  end unless RUBY_ENGINE == "jruby"
+  end
 
   it "correctly identifies identity columns as primary keys" do
     assert_equal true, @db.schema(:records)[0][1][:primary_key]
@@ -207,7 +209,7 @@ describe "postgres connection" do
     assert_raises Sequel::DatabaseDisconnectError do
       @db.copy_table(@db[:records])
     end
-  end unless RUBY_ENGINE == "jruby"
+  end
 
   it "clears Active Record statement cache on ActiveRecord::PreparedStatementCacheExpired" do
     statement_cache = ActiveRecord::Base.connection.instance_variable_get(:@statements)
@@ -223,5 +225,18 @@ describe "postgres connection" do
     end
 
     assert_equal 0, statement_cache.length
-  end unless !defined?(ActiveRecord::PreparedStatementCacheExpired) || RUBY_ENGINE == "jruby"
+  end if defined?(ActiveRecord::PreparedStatementCacheExpired)
+
+  it "allows calling Active Record queries inside transaction" do
+    activerecord_model = Class.new(ActiveRecord::Base)
+    activerecord_model.table_name = :records
+
+    @db.transaction do |conn|
+      activerecord_model.create(col: "foo", time: Time.new(2021, 1, 10))
+      record = activerecord_model.connection.exec_query("SELECT * FROM records").first
+
+      assert_equal "foo",                 record["col"]
+      assert_equal Time.new(2021, 1, 10), record["time"]
+    end
+  end
 end

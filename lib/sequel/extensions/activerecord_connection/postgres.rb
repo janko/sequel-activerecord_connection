@@ -10,9 +10,7 @@ module Sequel
 
           Utils.add_prepared_statements_cache(conn)
 
-          Utils.set_value(conn, :type_map_for_results, PG::TypeMapAllStrings.new) do
-            yield conn
-          end
+          yield conn
         end
       end
 
@@ -84,7 +82,9 @@ module Sequel
         # Return the PG::Result containing the query results.
         def execute_query(sql, args)
           @db.log_connection_yield(sql, self, args) do
-            args ? async_exec_params(sql, args) : async_exec(sql)
+            Utils.set_value(self, :type_map_for_results, PG::TypeMapAllStrings.new) do
+              args ? async_exec_params(sql, args) : async_exec(sql)
+            end
           end
         end
       end
