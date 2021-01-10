@@ -182,16 +182,18 @@ describe "postgres connection" do
   end unless RUBY_ENGINE == "jruby"
 
   it "supports #copy_table and #copy_into" do
-    @db.copy_table(@db[:records])
+    @db.copy_into(:records, format: "csv", data: ["1,foo,2021-01-10 T00:00:00"])
 
     assert_logged <<~SQL
-      COPY (SELECT * FROM "records") TO STDOUT
+      COPY "records" FROM STDIN (FORMAT csv)
     SQL
 
-    @db.copy_into(:records, data: [])
+    assert_equal Hash[id: 1, col: "foo", time: Time.utc(2021, 1, 10)], @db[:records].first
+
+    assert_equal "1,foo,2021-01-10 00:00:00", @db.copy_table(:records, format: "csv").chomp
 
     assert_logged <<~SQL
-      COPY "records" FROM STDIN
+      COPY "records" TO STDOUT (FORMAT csv)
     SQL
   end unless RUBY_ENGINE == "jruby"
 
