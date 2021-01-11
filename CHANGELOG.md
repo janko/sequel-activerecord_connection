@@ -1,4 +1,4 @@
-## HEAD
+## 1.2.2 (2021-01-11)
 
 * Ensure Active Record queries inside a Sequel transaction are typemapped correctly in postgres adapter (@janko)
 
