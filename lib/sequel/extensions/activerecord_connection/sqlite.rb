@@ -15,8 +15,16 @@ module Sequel
 
           Utils.add_prepared_statements_cache(conn)
 
+          yield conn
+        end
+      end
+
+      private
+
+      def _execute(type, sql, opts, &block)
+        synchronize(opts[:server]) do |conn|
           Utils.set_value(conn, :results_as_hash, nil) do
-            yield conn
+            super
           end
         end
       end

@@ -173,4 +173,17 @@ describe "sqlite3 connection" do
       INSERT INTO `records` (`time`) VALUES ('2020-04-26 00:00:00.000000')
     SQL
   end
+
+  it "allows calling Active Record queries inside transaction" do
+    activerecord_model = Class.new(ActiveRecord::Base)
+    activerecord_model.table_name = :records
+
+    @db.transaction do
+      record = activerecord_model.create(col: "foo", time: Time.new(2021, 1, 10))
+      record = activerecord_model.find(record.id)
+
+      assert_equal "foo",                 record.col
+      assert_equal Time.new(2021, 1, 10), record.time
+    end
+  end
 end
