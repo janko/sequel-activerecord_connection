@@ -1,3 +1,7 @@
+## 1.2.3 (2021-07-17)
+
+* Bump `after_commit_everywhere` dependency to `~> 1.0` (@wivarn)
+
 ## 1.2.2 (2021-01-11)
 
 * Ensure Active Record queries inside a Sequel transaction are typemapped correctly in postgres adapter (@janko)
