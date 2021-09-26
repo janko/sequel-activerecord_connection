@@ -1,4 +1,4 @@
-## HEAD
+## 1.2.4 (2021-09-27)
 
 * Allow using with Active Record 7.0 (@janko)
 
