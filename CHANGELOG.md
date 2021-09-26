@@ -1,5 +1,7 @@
 ## HEAD
 
+* Allow using with Active Record 7.0 (@janko)
+
 * Use `ActiveRecord.default_timezone` on Active Record 7.0 or greater (@janko)
 
 ## 1.2.3 (2021-07-17)
