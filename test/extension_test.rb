@@ -828,15 +828,15 @@ describe "General extension" do
 
   describe "#timezone" do
     it "defaults to ActiveRecord::Base.default_timezone" do
-      ActiveRecord::Base.default_timezone = :utc
+      set_activerecord_timezone(:utc)
       assert_equal :utc, @db.timezone
 
-      ActiveRecord::Base.default_timezone = :local
+      set_activerecord_timezone(:local)
       assert_equal :local, @db.timezone
     end
 
     it "picks manually set value" do
-      ActiveRecord::Base.default_timezone = :utc
+      set_activerecord_timezone(:utc)
       @db.timezone = :local
 
       assert_equal :local, @db.timezone

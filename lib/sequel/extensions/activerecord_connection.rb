@@ -48,7 +48,7 @@ module Sequel
 
     # Match database timezone with Active Record.
     def timezone
-      @timezone || ActiveRecord::Base.default_timezone
+      @timezone || activerecord_timezone
     end
 
     private
@@ -149,6 +149,16 @@ module Sequel
         connection: activerecord_connection,
         &block
       )
+    end
+
+    if ActiveRecord::VERSION::MAJOR >= 7
+      def activerecord_timezone
+        ActiveRecord.default_timezone
+      end
+    else
+      def activerecord_timezone
+        ActiveRecord::Base.default_timezone
+      end
     end
   end
 

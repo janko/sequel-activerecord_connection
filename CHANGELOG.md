@@ -1,3 +1,7 @@
+## HEAD
+
+* Use `ActiveRecord.default_timezone` on Active Record 7.0 or greater (@janko)
+
 ## 1.2.3 (2021-07-17)
 
 * Bump `after_commit_everywhere` dependency to `~> 1.0` (@wivarn)

@@ -155,7 +155,7 @@ describe "postgres connection" do
   end
 
   it "correctly handles ActiveRecord's local timezone setting" do
-    ActiveRecord::Base.default_timezone = :local
+    set_activerecord_timezone(:local)
 
     time = Time.new(2020, 4, 26, 0, 0, 0)
     utc_offset = time.to_s[/\S+$/]

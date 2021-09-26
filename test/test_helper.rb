@@ -89,8 +89,16 @@ class Minitest::Test
 
   def teardown
     ActiveRecord::Base.remove_connection
-    ActiveRecord::Base.default_timezone = :utc # reset default setting
+    set_activerecord_timezone(:utc) # reset default setting
     Sequel::DATABASES.delete(@db) if defined?(@db)
+  end
+
+  def set_activerecord_timezone(value)
+    if ActiveRecord::VERSION::MAJOR >= 7
+      ActiveRecord.default_timezone = value
+    else
+      ActiveRecord::Base.default_timezone = value
+    end
   end
 
   def assert_logged(content)
