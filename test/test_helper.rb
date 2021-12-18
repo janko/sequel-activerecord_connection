@@ -47,7 +47,7 @@ class Minitest::Test
     end
 
     if RUBY_ENGINE == "jruby"
-      options[:properties] = { serverTimezone: java.util.TimeZone.getDefault.getID }
+      options[:properties] = { allowPublicKeyRetrieval: true }
     end
 
     activerecord_connect(
