@@ -1,4 +1,4 @@
-## HEAD
+## 1.2.5 (2021-12-09)
 
 * Loosen Active Record dependency to allow any 7.x version (@janko)
 
