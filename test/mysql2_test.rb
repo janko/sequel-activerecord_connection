@@ -198,4 +198,4 @@ describe "mysql2 connection" do
       assert_equal Time.new(2021, 1, 10), record.time
     end
   end
-end unless ENV["CI"] && RUBY_VERSION < "2.4"
+end

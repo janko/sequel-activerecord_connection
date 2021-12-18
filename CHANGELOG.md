@@ -1,5 +1,7 @@
 ## HEAD
 
+* Drop support for Ruby 2.3 (@janko)
+
 * Allow using the `sql_log_normalizer` Sequel database extension (@janko)
 
 ## 1.2.4 (2021-09-27)
