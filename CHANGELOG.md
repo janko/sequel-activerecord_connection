@@ -1,5 +1,7 @@
 ## HEAD
 
+* Loosen Active Record dependency to allow any 7.x version (@janko)
+
 * Drop support for Ruby 2.3 (@janko)
 
 * Allow using the `sql_log_normalizer` Sequel database extension (@janko)

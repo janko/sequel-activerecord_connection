@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.4"
 
   spec.add_dependency "sequel", "~> 5.16"
-  spec.add_dependency "activerecord", ">= 4.2", "< 7.1"
+  spec.add_dependency "activerecord", ">= 4.2", "< 8"
   spec.add_dependency "after_commit_everywhere", "~> 1.1"
 
   spec.add_development_dependency "sequel", "~> 5.38"
