@@ -124,6 +124,12 @@ module Sequel
       end
     end
 
+    # Prevents sql_log_normalizer DB extension from skipping the normalization.
+    def skip_logging?
+      return false if @loaded_extensions.include?(:sql_log_normalizer)
+      super
+    end
+
     # Active Record doesn't guarantee that a single connection can only be used
     # by one thread at a time, so we need to use locking, which is what Active
     # Record does internally as well.

@@ -850,6 +850,15 @@ describe "General extension" do
 
       assert_match(/SELECT 1/, output.string)
     end
+
+    it "sends normalized SQL to Active Record when using sql_log_normalizer extension" do
+      @db.extension :sql_log_normalizer
+      @db[:records].where(col: "15", time: Time.now).first
+
+      assert_logged <<~SQL
+        SELECT * FROM "records" WHERE (("col" = ?) AND ("time" = ?)) LIMIT ?
+      SQL
+    end
   end
 
   describe "#valid_connection?" do
