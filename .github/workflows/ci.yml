@@ -21,7 +21,7 @@ jobs:
           POSTGRES_PASSWORD: sequel_activerecord_connection
 
       mysql:
-        image: mysql:5.7
+        image: mysql:latest
         ports: ["3306:3306"]
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
         env:
