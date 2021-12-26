@@ -1,4 +1,4 @@
-## HEAD
+## 1.2.6 (2021-12-26)
 
 * Speed up `#activerecord_lock` by avoiding checking Active Record version at runtime (@janko)
 
