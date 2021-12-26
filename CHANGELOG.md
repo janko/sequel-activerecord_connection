@@ -1,3 +1,7 @@
+## HEAD
+
+* Speed up `#activerecord_lock` by avoiding checking Active Record version at runtime (@janko)
+
 ## 1.2.5 (2021-12-19)
 
 * Loosen Active Record dependency to allow any 7.x version (@janko)

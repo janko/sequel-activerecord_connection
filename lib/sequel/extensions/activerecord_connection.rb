@@ -133,13 +133,17 @@ module Sequel
     # Active Record doesn't guarantee that a single connection can only be used
     # by one thread at a time, so we need to use locking, which is what Active
     # Record does internally as well.
-    def activerecord_lock
-      return yield if ActiveRecord.version < Gem::Version.new("5.1.0")
-
-      activerecord_connection.lock.synchronize do
-        ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
-          yield
+    if ActiveRecord.version >= Gem::Version.new("5.1.0")
+      def activerecord_lock
+        activerecord_connection.lock.synchronize do
+          ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+            yield
+          end
         end
+      end
+    else
+      def activerecord_lock
+        yield
       end
     end
 
@@ -157,7 +161,7 @@ module Sequel
       )
     end
 
-    if ActiveRecord::VERSION::MAJOR >= 7
+    if ActiveRecord.version >= Gem::Version.new("7.0")
       def activerecord_timezone
         ActiveRecord.default_timezone
       end
