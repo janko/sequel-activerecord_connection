@@ -1,4 +1,4 @@
-## HEAD
+## 1.2.7 (2022-01-20)
 
 * Require Sequel 3.38+ (@janko)
 
