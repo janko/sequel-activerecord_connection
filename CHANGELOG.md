@@ -1,3 +1,7 @@
+## HEAD
+
+* Require Sequel 3.38+ (@janko)
+
 ## 1.2.6 (2021-12-26)
 
 * Speed up connection access by avoiding checking Active Record version at runtime (@janko)
