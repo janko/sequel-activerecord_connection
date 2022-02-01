@@ -34,7 +34,7 @@ In Rails context, there are additional considerations for a Sequel connection
 to play nicely. Connecting and disconnecting would have to go in lockstep with
 Active Record, to make commands such as `rails db:create` and `rails db:drop`
 work. You'd also need to find a way for system tests and the app running in the
-background to use the same database connection, which is something Sequel
+background to share the same database connection, which is something Sequel
 wasn't designed for. Reusing Active Record's connection means (dis)connecting
 and sharing between threads is all handled automatically.
 
