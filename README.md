@@ -25,9 +25,9 @@ If Sequel and Active Record each have their own connections, then it's not
 possible to combine their transactions. If we executed a Sequel query inside of
 an Active Record transaction, that query won't actually be executed inside a
 database transaction. This is because transactions are tied to the database
-connection; if one connection opens a database transaction, this doesn't affect
-queries executed on a different connection, even if both connections are used
-in the same ruby process. With this library, transactions and queries can be
+connection; if one connection opens a transaction, this doesn't affect queries
+executed on a different connection, even if both connections are used in the
+same ruby process. With this library, transactions and queries can be
 seamlessly combined between Active Record and Sequel.
 
 In Rails context, there are additional considerations for a Sequel connection
