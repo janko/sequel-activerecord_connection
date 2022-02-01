@@ -5,8 +5,8 @@ Active Record connection for database interaction.
 
 This can be useful if you want to use a library that uses Sequel (e.g.
 [Rodauth] or [rom-sql]), or you're transitioning from Active Record to Sequel,
-or if you just want to use Sequel for some queries, and you want to avoid
-creating new database connections.
+or if you just want to use Sequel for more complex queries, and you want to
+avoid creating new database connections.
 
 It works on ActiveRecord 4.2+ and fully supports PostgresSQL, MySQL and SQLite
 adapters, both native and JDBC (JRuby). There is attempted suppport for [Oracle
