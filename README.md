@@ -1,18 +1,42 @@
 # sequel-activerecord_connection
 
-This is an extension for [Sequel] that allows it to reuse an existing
-ActiveRecord connection for database interaction.
+This is a database extension for [Sequel] that makes it to reuse an existing
+Active Record connection for database interaction.
 
-This can be useful if you're using a library that uses Sequel for database
-interaction (e.g. [Rodauth] or [rom-sql]), but you want to avoid creating a
-separate database connection. Or if you're transitioning from ActiveRecord to
-Sequel, and want the database connection to be shared.
+This can be useful if you want to use a library that uses Sequel (e.g.
+[Rodauth] or [rom-sql]), or you're transitioning from Active Record to Sequel,
+or if you just want to use Sequel for some queries, and you want to avoid
+creating new database connections.
 
 It works on ActiveRecord 4.2+ and fully supports PostgresSQL, MySQL and SQLite
-adapters, both the native ones and JDBC (JRuby). There is attempted suppport
-for [Oracle enhanced] and [SQL Server] Active Record adapters (`oracle` and
-`tinytds` in Sequel). Other adapters might work too, but their integration
-hasn't been tested.
+adapters, both native and JDBC (JRuby). There is attempted suppport for [Oracle
+enhanced] and [SQL Server] Active Record adapters (`oracle` and `tinytds` in
+Sequel). Other adapters might work too, but their integration hasn't been
+tested.
+
+## Why reuse the database connection?
+
+At first it might appear that, as long as you're fine with the performance
+impact of your database server having to maintain additional open connections,
+it would be fine if Sequel had its own database connection. However, there are
+additional caveats when you try to combine it with Active Record.
+
+If Sequel and Active Record each have their own connections, then it's not
+possible to combine their transactions. If we executed a Sequel query inside of
+an Active Record transaction, that query won't actually be executed inside a
+database transaction. This is because transactions are tied to the database
+connection; if one connection opens a database transaction, this doesn't affect
+queries executed on a different connection, even if both connections are used
+in the same ruby process. With this library, transactions and queries can be
+seamlessly combined between Active Record and Sequel.
+
+In Rails context, there are additional considerations for a Sequel connection
+to play nicely. Connecting and disconnecting would have to go in lockstep with
+Active Record, to make commands such as `rails db:create` and `rails db:drop`
+work. You'd also need to find a way for system tests and the app running in the
+background to use the same database connection, which is something Sequel
+wasn't designed for. Reusing Active Record's connection means (dis)connecting
+and sharing between threads is all handled automatically.
 
 ## Installation
 
