@@ -115,7 +115,8 @@ describe "mysql2 connection" do
       SQL
     else
       assert_logged <<~SQL
-        SELECT * FROM `records` WHERE (`col` = ?) LIMIT 1; ["foo"]
+        Preparing first_by_col: SELECT * FROM `records` WHERE (`col` = ?) LIMIT 1
+        Executing first_by_col; ["foo"]
       SQL
     end
   end
