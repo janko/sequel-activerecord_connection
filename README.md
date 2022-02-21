@@ -164,9 +164,8 @@ DB.transaction(auto_savepoint: true) do
 end
 #>> BEGIN
 #>> SAVEPOINT active_record_1
-#>> RELEASE SAVEPOINT active_record_1
+#>> ROLLBACK TO SAVEPOINT active_record_1
 #>> COMMIT
-#>> after commit
 ```
 
 In case of (a) adding a transaction hook while Active Record holds the
@@ -192,13 +191,13 @@ end
 # after a savepoint is released, if the enclosing transaction is not joinable.
 ActiveRecord::Base.transaction(joinable: false) do
   DB.transaction do
-    DB.after_commit { puts "after commit" }
+    DB.after_commit { puts "after savepoint release" }
   end
 end
 #>> BEGIN
 #>> SAVEPOINT active_record_1
 #>> RELEASE SAVEPOINT active_record_1
-#>> after commit
+#>> after savepoint release
 #>> COMMIT
 ```
 
