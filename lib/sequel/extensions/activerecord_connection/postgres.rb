@@ -10,6 +10,11 @@ module Sequel
 
           Utils.add_prepared_statements_cache(conn)
 
+          # compatibility for pg_streaming database extension from sequel_pg gem
+          if defined?(Sequel::Postgres::Streaming) && is_a?(Sequel::Postgres::Streaming)
+            conn.extend(Sequel::Postgres::Streaming::AdapterMethods)
+          end
+
           yield conn
         end
       end
@@ -70,11 +75,11 @@ module Sequel
         # yield the results, otherwise, return the number of changed rows.
         def execute(sql, args = nil)
           args   = args.map { |v| @db.bound_variable_arg(v, self) } if args
-          result = check_disconnect_errors { execute_query(sql, args) }
+          q = check_disconnect_errors { execute_query(sql, args) }
 
-          block_given? ? yield(result) : result.cmd_tuples
+          block_given? ? yield(q) : q.cmd_tuples
         ensure
-          result.clear if result
+          q.clear if q && q.respond_to?(:clear)
         end
 
         private

@@ -1,3 +1,7 @@
+## HEAD
+
+* Support the pg_streaming database extension from the sequel_pg gem (@janko)
+
 ## 1.2.7 (2022-01-20)
 
 * Require Sequel 3.38+ (@janko)

@@ -239,4 +239,11 @@ describe "postgres connection" do
       assert_equal Time.new(2021, 1, 10), record["time"]
     end
   end
+
+  it "supports pg_streaming database extension from sequel_pg" do
+    @db.extension :pg_streaming
+    @db[:records].multi_insert [{ col: "a" }, { col: "b" }]
+    records = @db[:records].order(:col).stream.enum_for(:each).to_a
+    assert_equal ["a", "b"], records.map { |r| r[:col] }
+  end
 end
