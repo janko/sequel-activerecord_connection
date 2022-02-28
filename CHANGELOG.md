@@ -1,4 +1,4 @@
-## HEAD
+## 1.2.8 (2022-02-28)
 
 * Support the pg_streaming database extension from the sequel_pg gem (@janko)
 
