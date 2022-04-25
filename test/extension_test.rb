@@ -174,12 +174,20 @@ describe "General extension" do
         end
       end
 
-      assert_logged <<~SQL
-        BEGIN
-        SAVEPOINT active_record_1
-        RELEASE SAVEPOINT active_record_1
-        COMMIT
-      SQL
+      if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")
+        assert_logged <<~SQL
+          BEGIN
+          SAVEPOINT active_record_1
+          RELEASE SAVEPOINT active_record_1
+          COMMIT
+        SQL
+      else
+        assert_logged <<~SQL
+          BEGIN
+          BEGIN
+          COMMIT
+        SQL
+      end
     end
 
     it "support :savepoint option" do
@@ -375,32 +383,28 @@ describe "General extension" do
       @db.transaction(isolation: :uncommitted) { }
 
       assert_logged <<~SQL
-        BEGIN
-        SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+        BEGIN#{"\nSET_TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL READ UNCOMMITTED
         COMMIT
       SQL
 
       @db.transaction(isolation: :committed) { }
 
       assert_logged <<~SQL
-        BEGIN
-        SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+        BEGIN#{"\nSET_TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL READ COMMITTED
         COMMIT
       SQL
 
       @db.transaction(isolation: :repeatable) { }
 
       assert_logged <<~SQL
-        BEGIN
-        SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+        BEGIN#{"\nSET_TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL REPEATABLE READ
         COMMIT
       SQL
 
       @db.transaction(isolation: :serializable) { }
 
       assert_logged <<~SQL
-        BEGIN
-        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+        BEGIN#{"\nSET_TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL SERIALIZABLE
         COMMIT
       SQL
     end

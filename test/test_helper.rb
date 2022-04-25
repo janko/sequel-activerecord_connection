@@ -39,6 +39,10 @@ class Minitest::Test
   def connect_mysql2
     options = {}
 
+    if ActiveRecord.version >= Gem::Version.new("7.1.0.alpha")
+      options[:prepared_statements] = false
+    end
+
     if ENV["CI"]
       options[:username] = "root"
       options[:host]     = "127.0.0.1"
