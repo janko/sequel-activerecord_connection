@@ -184,7 +184,6 @@ describe "General extension" do
       else
         assert_logged <<~SQL
           BEGIN
-          BEGIN
           COMMIT
         SQL
       end
@@ -383,28 +382,28 @@ describe "General extension" do
       @db.transaction(isolation: :uncommitted) { }
 
       assert_logged <<~SQL
-        BEGIN#{"\nSET_TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL READ UNCOMMITTED
+        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL READ UNCOMMITTED
         COMMIT
       SQL
 
       @db.transaction(isolation: :committed) { }
 
       assert_logged <<~SQL
-        BEGIN#{"\nSET_TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL READ COMMITTED
+        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL READ COMMITTED
         COMMIT
       SQL
 
       @db.transaction(isolation: :repeatable) { }
 
       assert_logged <<~SQL
-        BEGIN#{"\nSET_TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL REPEATABLE READ
+        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL REPEATABLE READ
         COMMIT
       SQL
 
       @db.transaction(isolation: :serializable) { }
 
       assert_logged <<~SQL
-        BEGIN#{"\nSET_TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL SERIALIZABLE
+        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL SERIALIZABLE
         COMMIT
       SQL
     end
