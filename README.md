@@ -61,7 +61,8 @@ $ gem install sequel-activerecord_connection
 ## Usage
 
 Assuming you've configured your ActiveRecord connection, you can initialize the
-appropriate Sequel adapter and load the `activerecord_connection` extension:
+appropriate Sequel adapter and load the `activerecord_connection` extension (in
+Rails you'd put this code into an initializer):
 
 ```rb
 require "sequel"
