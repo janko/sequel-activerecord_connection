@@ -38,6 +38,17 @@ background to share the same database connection, which is something Sequel
 wasn't designed for. Reusing Active Record's connection means (dis)connecting
 and sharing between threads is all handled automatically.
 
+## Framework Agnostic
+
+The only hard dependencies are:
+
+* [ActiveRecord](https://github.com/rails/rails/tree/main/activerecord)
+* [Sequel](https://github.com/jeremyevans/sequel)
+* [after_commit_everywhere](https://github.com/Envek/after_commit_everywhere)
+
+...which means you can use it with any Rack / Ruby based framework: 
+Rails / Roda / Sinatra etc. or even without a framework.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -61,13 +72,14 @@ $ gem install sequel-activerecord_connection
 ## Usage
 
 Assuming you've configured your ActiveRecord connection, you can initialize the
-appropriate Sequel adapter and load the `activerecord_connection` extension (in
-Rails you'd put this code into an initializer):
+appropriate Sequel adapter and load the `activerecord_connection` extension: e.g.
 
 ```rb
-require "sequel"
+# Place in relevant initializer
+# e.g. Rails: config/initializers/sequel.rb
 
-DB = Sequel.postgres(extensions: :activerecord_connection)
+require "sequel"
+DB = Sequel.postgres(extensions: :activerecord_connection) # postgres
 ```
 
 Now any Sequel operations that you make will internaly be done using the
@@ -238,6 +250,10 @@ When you're done, you can delete the created databases and users:
 $ rake db_teardown_postgres
 $ rake db_teardown_mysql
 ```
+
+## Support
+
+Please feel free to raise a new disucssion in [Github issues](https://github.com/janko/sequel-activerecord_connection/discussions), or search amongst the existing questions there.
 
 ## License
 
