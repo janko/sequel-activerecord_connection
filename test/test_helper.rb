@@ -10,8 +10,7 @@ require "minitest/autorun"
 require "minitest/pride"
 
 require "active_record"
-require "sequel/core"
-require "sequel/model"
+require "sequel"
 
 require "stringio"
 require "active_support/core_ext/string"
