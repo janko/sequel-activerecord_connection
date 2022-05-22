@@ -229,6 +229,31 @@ end
 DB.activerecord_model = MyModel
 ```
 
+### Normalizing SQL logs
+
+Active Record injects values into queries using bound variables, and displays
+them at the end of SQL logs:
+
+```
+SELECT accounts.* FROM accounts WHERE accounts.email = $1 LIMIT $2  [["email", "user@example.com"], ["LIMIT", 1]]
+```
+
+Sequel interpolates values into its queries, so by default its SQL logs include
+them inline:
+
+```
+SELECT accounts.* FROM accounts WHERE accounts.email = 'user@example.com' LIMIT 1
+```
+
+If you want to normalize logs to group similar queries, or you want to protect
+sensitive data from being stored in the logs, you can use the
+[sql_log_normalizer] extension to remove literal strings and numbers from
+logged SQL queries:
+
+```
+SELECT accounts.* FROM accounts WHERE accounts.email = ? LIMIT ?
+```
+
 ## Tests
 
 You'll first want to run the rake tasks for setting up databases and users:
@@ -269,3 +294,4 @@ Everyone interacting in this project's codebases, issue trackers, chat rooms and
 [sequel transaction hooks]: http://sequel.jeremyevans.net/rdoc/files/doc/transactions_rdoc.html#label-Transaction+Hooks
 [Oracle enhanced]: https://github.com/rsim/oracle-enhanced
 [SQL Server]: https://github.com/rails-sqlserver/activerecord-sqlserver-adapter
+[sql_log_normalizer]: https://sequel.jeremyevans.net/rdoc-plugins/files/lib/sequel/extensions/sql_log_normalizer_rb.html
