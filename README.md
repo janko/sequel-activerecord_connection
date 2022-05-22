@@ -234,14 +234,14 @@ DB.activerecord_model = MyModel
 Active Record injects values into queries using bound variables, and displays
 them at the end of SQL logs:
 
-```
+```sql
 SELECT accounts.* FROM accounts WHERE accounts.email = $1 LIMIT $2  [["email", "user@example.com"], ["LIMIT", 1]]
 ```
 
 Sequel interpolates values into its queries, so by default its SQL logs include
 them inline:
 
-```
+```sql
 SELECT accounts.* FROM accounts WHERE accounts.email = 'user@example.com' LIMIT 1
 ```
 
@@ -250,7 +250,11 @@ sensitive data from being stored in the logs, you can use the
 [sql_log_normalizer] extension to remove literal strings and numbers from
 logged SQL queries:
 
+```rb
+DB = Sequel.postgres(extensions: :activerecord_connection)
+DB.extension :sql_log_normalizer
 ```
+```sql
 SELECT accounts.* FROM accounts WHERE accounts.email = ? LIMIT ?
 ```
 
