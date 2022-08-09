@@ -30,3 +30,13 @@ desc "Teardown database used for testing on MySQL"
 task :db_teardown_mysql do
   sh 'mysql -u root -p mysql < test/sql/mysql_teardown.sql'
 end
+
+desc "Setup database used for testing on Microsoft SQL Server"
+task :db_setup_mssql do
+  sh 'docker exec -it sqledge /opt/mssql/bin/sqlcmd -b -r1 -i /home/mssql/setup.sql'
+end
+
+desc "Teardown database used for testing on Microsoft SQL Server"
+task :db_teardown_mssql do
+  sh 'docker exec -it sqledge /opt/mssql/bin/sqlcmd -b -r1 -i /home/mssql/teardown.sql'
+end

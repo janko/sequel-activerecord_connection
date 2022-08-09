@@ -5,6 +5,7 @@ Warning.ignore(:missing_ivar, Gem::Specification.find_by_name("sequel").load_pat
 Warning.ignore(/Capturing the given block using Proc\.new is deprecated/, Gem::Specification.find_by_name("activesupport").load_paths.first)
 Warning.ignore(/rb_(tainted_str_new(_cstr)?|check_safe_obj)/)
 Warning.ignore(/deprecated Object#=~ is called on Integer/) # ActiveRecord 4.2
+Warning.ignore(:ambiguous_slash, Gem::Specification.find_by_name("activerecord-sqlserver-adapter").load_paths.first) unless RUBY_ENGINE == "jruby"
 
 require "minitest/autorun"
 require "minitest/pride"
@@ -74,6 +75,20 @@ class Minitest::Test
 
     @db = Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}sqlite://",
       extensions: :activerecord_connection
+  end
+
+  def connect_sqlserver
+    raise "JRuby is not supported for SQL Server" if RUBY_ENGINE == "jruby"
+
+    activerecord_connect(
+      adapter: "sqlserver",
+      database: "rodauth_test",
+      username: "rodauth_test_password",
+      password: "Rodauth1.",
+      host: "localhost",
+    )
+
+    @db = Sequel.connect "tinytds://", extensions: :activerecord_connection
   end
 
   def setup

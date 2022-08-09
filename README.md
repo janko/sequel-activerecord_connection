@@ -9,10 +9,10 @@ or if you just want to use Sequel for more complex queries, and you want to
 avoid creating new database connections.
 
 It works on ActiveRecord 4.2+ and fully supports PostgresSQL, MySQL and SQLite
-adapters, both native and JDBC (JRuby). There is attempted suppport for [Oracle
-enhanced] and [SQL Server] Active Record adapters (`oracle` and `tinytds` in
-Sequel). Other adapters might work too, but their integration hasn't been
-tested.
+adapters, both native and JDBC (JRuby). The [SQL Server] external adapter is
+supported as well (`tinytds` in Sequel), and there is attempted support for
+[Oracle enhanced] (`oracle` and in Sequel). Other adapters might work too, but
+their integration hasn't been tested.
 
 ## Why reuse the database connection?
 
