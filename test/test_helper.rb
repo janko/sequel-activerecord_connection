@@ -5,7 +5,6 @@ Warning.ignore(:missing_ivar, Gem::Specification.find_by_name("sequel").load_pat
 Warning.ignore(/Capturing the given block using Proc\.new is deprecated/, Gem::Specification.find_by_name("activesupport").load_paths.first)
 Warning.ignore(/rb_(tainted_str_new(_cstr)?|check_safe_obj)/)
 Warning.ignore(/deprecated Object#=~ is called on Integer/) # ActiveRecord 4.2
-Warning.ignore(:ambiguous_slash, Gem::Specification.find_by_name("activerecord-sqlserver-adapter").load_paths.first) unless RUBY_ENGINE == "jruby"
 
 require "minitest/autorun"
 require "minitest/pride"

@@ -168,4 +168,4 @@ describe "mssql connection" do
       INSERT INTO [RECORDS] ([TIME]) VALUES ('2020-04-26T00:00:00.000')
     SQL
   end
-end unless ENV["CI"]
+end unless Gem::Specification.find_all_by_name("activerecord-sqlserver-adapter").empty?

@@ -8,7 +8,6 @@ platform :mri do
   gem "pg",      "~> 1.0"
   gem "mysql2",  "~> 0.5"
   gem "sqlite3", "~> 1.3"
-  gem "activerecord-sqlserver-adapter"
 end
 
 platform :jruby do
