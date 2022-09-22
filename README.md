@@ -51,22 +51,10 @@ Rails / Roda / Sinatra etc. or even without a framework.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```rb
-gem "sequel-activerecord_connection", "~> 1.0"
-```
-
-And then execute:
+Add the gem to your project:
 
 ```sh
-$ bundle install
-```
-
-Or install it yourself as:
-
-```sh
-$ gem install sequel-activerecord_connection
+$ bundle add sequel-activerecord_connection
 ```
 
 ## Usage
