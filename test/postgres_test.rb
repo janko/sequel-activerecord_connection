@@ -246,4 +246,12 @@ describe "postgres connection" do
     records = @db[:records].order(:col).stream.enum_for(:each).to_a
     assert_equal ["a", "b"], records.map { |r| r[:col] }
   end
+
+  it "supports pg_auto_parameterize extension" do
+    @db.extension :pg_auto_parameterize
+    @db[:records].where(col: "a").to_a
+    assert_logged <<~SQL
+      SELECT * FROM "records" WHERE ("col" = $1); ["a"]
+    SQL
+  end
 end
