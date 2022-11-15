@@ -31,9 +31,7 @@ describe "mysql2 connection" do
     assert_equal [:id, :col, :time], @db[:records].columns
 
     assert_logged <<~SQL
-      BEGIN
       INSERT INTO `records` (`col`) VALUES ('a'), ('b'), ('c')
-      COMMIT
       SELECT version()
       SELECT * FROM `records` ORDER BY `id`
     SQL

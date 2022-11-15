@@ -29,9 +29,7 @@ describe "postgres connection" do
     assert_equal "c", records[2][:col]
 
     assert_logged <<~SQL
-      BEGIN
       INSERT INTO "records" ("col") VALUES ('a'), ('b'), ('c')
-      COMMIT
       SELECT * FROM "records" ORDER BY "id"
     SQL
   end
