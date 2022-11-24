@@ -76,6 +76,12 @@ jobs:
           - ruby: "jruby-9.4"
             gemfile: "activerecord-7.0"
           - ruby: "jruby-9.4"
+            gemfile: "activerecord-5.2"
+          - ruby: "jruby-9.4"
+            gemfile: "activerecord-5.1"
+          - ruby: "jruby-9.4"
+            gemfile: "activerecord-5.0"
+          - ruby: "jruby-9.4"
             gemfile: "activerecord-4.2"
 
     env:
