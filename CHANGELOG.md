@@ -1,3 +1,7 @@
+## 1.2.10 (2022-12-13)
+
+* Fix incorrect PG type mapping when using prepared statements in Sequel (@janko)
+
 ## 1.2.9 (2022-03-15)
 
 * Remove `sequel_pg` and `pg` runtime dependencies introduced in the previous version (@janko)
