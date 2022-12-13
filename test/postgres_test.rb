@@ -197,10 +197,6 @@ describe "postgres connection" do
     SQL
   end
 
-  it "correctly identifies identity columns as primary keys" do
-    assert_equal true, @db.schema(:records)[0][1][:primary_key]
-  end
-
   it "converts disconnects into Sequel::DatabaseDisconnectError" do
     @db.synchronize { |conn| @db.disconnect_connection(conn) }
 
@@ -225,19 +221,6 @@ describe "postgres connection" do
     assert_equal 0, statement_cache.length
   end if defined?(ActiveRecord::PreparedStatementCacheExpired)
 
-  it "allows calling Active Record queries inside transaction" do
-    activerecord_model = Class.new(ActiveRecord::Base)
-    activerecord_model.table_name = :records
-
-    @db.transaction do |conn|
-      activerecord_model.create(col: "foo", time: Time.new(2021, 1, 10))
-      record = activerecord_model.connection.exec_query("SELECT * FROM records").first
-
-      assert_equal "foo",                 record["col"]
-      assert_equal Time.new(2021, 1, 10), record["time"]
-    end
-  end
-
   it "supports pg_streaming database extension from sequel_pg" do
     @db.extension :pg_streaming
     @db[:records].multi_insert [{ col: "a" }, { col: "b" }]
@@ -251,5 +234,22 @@ describe "postgres connection" do
     assert_logged <<~SQL
       SELECT * FROM "records" WHERE ("col" = $1); ["a"]
     SQL
+  end
+
+  it "reverts type maps inside a Sequel transaction" do
+    @db.transaction do |conn|
+      rows = ActiveRecord::Base.connection.exec_query("SELECT TRUE")
+
+      assert_equal true, rows[0]["bool"]
+    end
+  end
+
+  it "patches type maps for normal statements" do
+    assert_equal true, @db.schema(:records)[0][1][:primary_key]
+  end
+
+  it "patches type maps for prepared statements" do
+    rows = @db["SELECT TRUE"].prepare(:select, :select_true).call
+    assert_equal true, rows[0][:bool]
   end
 end

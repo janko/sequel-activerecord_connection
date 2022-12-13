@@ -31,6 +31,14 @@ module Sequel
         raise
       end
 
+      private
+
+      def _execute(conn, *)
+        Utils.set_value(conn, :type_map_for_results, PG::TypeMapAllStrings.new) do
+          super
+        end
+      end
+
       # Copy-pasted from Sequel::Postgres::Adapter.
       module ConnectionMethods
         # The underlying exception classes to reraise as disconnect errors
@@ -87,9 +95,7 @@ module Sequel
         # Return the PG::Result containing the query results.
         def execute_query(sql, args)
           @db.log_connection_yield(sql, self, args) do
-            Utils.set_value(self, :type_map_for_results, PG::TypeMapAllStrings.new) do
-              args ? async_exec_params(sql, args) : async_exec(sql)
-            end
+            args ? async_exec_params(sql, args) : async_exec(sql)
           end
         end
       end
