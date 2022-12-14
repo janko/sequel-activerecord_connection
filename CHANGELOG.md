@@ -12,7 +12,7 @@
 
 ## 1.2.7 (2022-01-20)
 
-* Require Sequel 3.38+ (@janko)
+* Require Sequel 5.38+ (@janko)
 
 ## 1.2.6 (2021-12-26)
 
