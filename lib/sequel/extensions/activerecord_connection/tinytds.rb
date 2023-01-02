@@ -14,6 +14,12 @@ module Sequel
           end
         end
       end
+
+      private
+
+      def activerecord_connection_class
+        ::TinyTds::Client
+      end
     end
   end
 end

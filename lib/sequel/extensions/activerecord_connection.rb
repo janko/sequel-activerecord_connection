@@ -35,7 +35,13 @@ module Sequel
     # Avoid calling Sequel's connection pool, instead use Active Record's.
     def synchronize(*)
       activerecord_lock do
-        yield activerecord_connection.raw_connection
+        conn = activerecord_connection.raw_connection
+
+        if activerecord_connection_class && !conn.is_a?(activerecord_connection_class)
+          fail Error, "expected Active Record connection to be a #{activerecord_connection_class}, got #{conn.class}"
+        end
+
+        yield conn
       end
     end
 
@@ -149,6 +155,10 @@ module Sequel
 
     def activerecord_connection
       activerecord_model.connection
+    end
+
+    def activerecord_connection_class
+      # defines in adapter modules
     end
 
     def activerecord_log(sql, &block)

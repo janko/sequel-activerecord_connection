@@ -28,6 +28,10 @@ module Sequel
           end
         end
       end
+
+      def activerecord_connection_class
+        ::SQLite3::Database
+      end
     end
   end
 end

@@ -39,6 +39,10 @@ module Sequel
         end
       end
 
+      def activerecord_connection_class
+        ::PG::Connection
+      end
+
       # Copy-pasted from Sequel::Postgres::Adapter.
       module ConnectionMethods
         # The underlying exception classes to reraise as disconnect errors

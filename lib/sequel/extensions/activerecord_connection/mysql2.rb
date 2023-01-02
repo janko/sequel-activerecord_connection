@@ -27,6 +27,10 @@ module Sequel
           conn.query_options.replace(conn.remove_instance_variable(:@sequel_default_query_options))
         end
       end
+
+      def activerecord_connection_class
+        ::Mysql2::Client
+      end
     end
   end
 end
