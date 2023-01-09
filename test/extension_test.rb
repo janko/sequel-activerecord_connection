@@ -97,13 +97,13 @@ describe "General extension" do
     end unless ActiveRecord.version < Gem::Version.new("5.1.0")
 
     it "checks the expected connection class" do
-      db = Sequel.connect "#{"jdbc:" if RUBY_ENGINE == "jruby"}sqlite://",
+      db = Sequel.connect "sqlite://",
         extensions:     :activerecord_connection,
         keep_reference: false
 
       error = assert_raises(Sequel::ActiveRecordConnection::Error) { db.run "SELECT 1" }
       assert_equal "expected Active Record connection to be a SQLite3::Database, got PG::Connection", error.message
-    end
+    end unless RUBY_ENGINE == "jruby"
   end
 
   describe "#transaction" do
