@@ -1,3 +1,7 @@
+## 1.2.11 (2023-01-09)
+
+* Raise explicit exception in case of mismatch between Active Record and Sequel adapter (@janko)
+
 ## 1.2.10 (2022-12-13)
 
 * Fix incorrect PG type mapping when using prepared statements in Sequel (@janko)
