@@ -239,11 +239,23 @@ sensitive data from being stored in the logs, you can use the
 logged SQL queries:
 
 ```rb
-DB = Sequel.postgres(extensions: :activerecord_connection)
-DB.extension :sql_log_normalizer
+Sequel.postgres(extensions: [:activerecord_connection, :sql_log_normalizer])
 ```
 ```sql
 SELECT accounts.* FROM accounts WHERE accounts.email = ? LIMIT ?
+```
+
+Note that the `sql_log_normalizer` extension opens a database connection while
+it's being loaded. If you're setting up Sequel in a Rails initializer, you'll
+probably want to handle the database not existing, so that commands such as
+`rails db:create` continue to work.
+
+```rb
+DB = Sequel.postgres(extensions: :activerecord_connection)
+begin
+  DB.extension :sql_log_normalizer
+rescue ActiveRecord::NoDatabaseError
+end
 ```
 
 ## Tests
