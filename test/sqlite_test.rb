@@ -152,7 +152,7 @@ describe "sqlite3 connection" do
 
     refute_empty @db[:records].where(Sequel[:time] < Sequel.date_add(Sequel::CURRENT_TIMESTAMP, minutes: 1))
     refute_empty @db[:records].where(Sequel[:time] > Sequel.date_sub(Sequel::CURRENT_TIMESTAMP, minutes: 1))
-  end if Gem::Version.new(Sequel.version) >= Gem::Version.new("5.33")
+  end
 
   it "correctly handles ActiveRecord's local timezone setting" do
     set_activerecord_timezone(:local)

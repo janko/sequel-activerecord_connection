@@ -8,7 +8,7 @@ This can be useful if you want to use a library that uses Sequel (e.g.
 or if you just want to use Sequel for more complex queries, and you want to
 avoid creating new database connections.
 
-It works on ActiveRecord 4.2+ and fully supports PostgresSQL, MySQL and SQLite
+It works on ActiveRecord 5.0+ and fully supports PostgresSQL, MySQL and SQLite
 adapters, both native and JDBC (JRuby). The [SQL Server] external adapter is
 supported as well (`tinytds` in Sequel), and there is attempted support for
 [Oracle enhanced] (`oracle` and in Sequel). Other adapters might work too, but

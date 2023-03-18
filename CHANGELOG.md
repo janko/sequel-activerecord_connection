@@ -1,3 +1,7 @@
+## HEAD
+
+* Drop support for Active Record 4.2 (@janko)
+
 ## 1.2.11 (2023-01-09)
 
 * Raise explicit exception in case of mismatch between Active Record and Sequel adapter (@janko)

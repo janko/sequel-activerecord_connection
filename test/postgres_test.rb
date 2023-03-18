@@ -242,7 +242,7 @@ describe "postgres connection" do
 
       assert_equal true, rows[0]["bool"]
     end
-  end if ActiveRecord.version >= Gem::Version.new("5.0")
+  end
 
   it "patches type maps for normal statements" do
     assert_equal true, @db.schema(:records)[0][1][:primary_key]
