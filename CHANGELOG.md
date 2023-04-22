@@ -1,3 +1,7 @@
+## 1.3.0 (2023-04-22)
+
+* Clear Active Record query cache after Sequel executes SQL statements (@janko)
+
 ## 1.2.11 (2023-01-09)
 
 * Raise explicit exception in case of mismatch between Active Record and Sequel adapter (@janko)
