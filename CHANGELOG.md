@@ -1,3 +1,7 @@
+## 1.3.1 (2023-04-22)
+
+* Fix Active Record's query cache not being cleared in SQLite adapter (@janko)
+
 ## 1.3.0 (2023-04-22)
 
 * Clear Active Record query cache after Sequel executes SQL statements (@janko)
