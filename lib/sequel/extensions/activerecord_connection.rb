@@ -57,6 +57,13 @@ module Sequel
       @timezone || activerecord_timezone
     end
 
+    # Clear Active Record's query cache after potential data modifications.
+    def execute(*)
+      super
+    ensure
+      clear_activerecord_query_cache
+    end
+
     private
 
     # Synchronizes transaction state with ActiveRecord. Sequel uses this
@@ -134,6 +141,16 @@ module Sequel
     def skip_logging?
       return false if @loaded_extensions.include?(:sql_log_normalizer)
       super
+    end
+
+    if ActiveRecord.version >= Gem::Version.new("7.0")
+      def clear_activerecord_query_cache
+        activerecord_model.clear_query_caches_for_current_thread
+      end
+    else
+      def clear_activerecord_query_cache
+        activerecord_connection.clear_query_cache
+      end
     end
 
     # Active Record doesn't guarantee that a single connection can only be used

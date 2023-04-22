@@ -14,6 +14,10 @@ require "sequel"
 require "stringio"
 require "active_support/core_ext/string"
 
+if ActiveRecord.respond_to?(:legacy_connection_handling)
+  ActiveRecord.legacy_connection_handling = false
+end
+
 class Minitest::Test
   def connect_postgresql
     options = {}

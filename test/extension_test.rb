@@ -861,11 +861,28 @@ describe "General extension" do
 
     it "sends normalized SQL to Active Record when using sql_log_normalizer extension" do
       @db.extension :sql_log_normalizer
-      @db[:records].where(col: "15", time: Time.now).first
+      @db[:records].first(col: "15", time: Time.now)
 
       assert_logged <<~SQL
         SELECT * FROM "records" WHERE (("col" = ?) AND ("time" = ?)) LIMIT ?
       SQL
+    end
+  end
+
+  describe "#execute" do
+    it "clears Active Records query cache" do
+      ActiveRecord::Base.connection.enable_query_cache!
+
+      activerecord_model = Class.new(ActiveRecord::Base)
+      activerecord_model.table_name = :records
+
+      assert_nil activerecord_model.find_by(col: "foo")
+      @db[:records].disable_insert_returning.insert(col: "foo")
+      refute_nil activerecord_model.find_by(col: "foo")
+
+      assert_nil activerecord_model.find_by(col: "bar")
+      @db[:records].returning(:id).insert(col: "bar")
+      refute_nil activerecord_model.find_by(col: "bar")
     end
   end
 
