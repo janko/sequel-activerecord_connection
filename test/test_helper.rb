@@ -4,6 +4,7 @@ require "warning"
 Warning.ignore(:missing_ivar, Gem::Specification.find_by_name("sequel").load_paths.first)
 Warning.ignore(/Capturing the given block using Proc\.new is deprecated/, Gem::Specification.find_by_name("activesupport").load_paths.first)
 Warning.ignore(/rb_(tainted_str_new(_cstr)?|check_safe_obj)/)
+Warning.ignore(/deprecated Object#=~ is called on Integer/) # ActiveRecord 4.2
 
 require "minitest/autorun"
 require "minitest/pride"
