@@ -252,4 +252,19 @@ describe "postgres connection" do
     rows = @db["SELECT TRUE"].prepare(:select, :select_true).call
     assert_equal true, rows[0][:bool]
   end
+
+  it "clears Active Records query cache" do
+    ActiveRecord::Base.connection.enable_query_cache!
+
+    activerecord_model = Class.new(ActiveRecord::Base)
+    activerecord_model.table_name = :records
+
+    assert_nil activerecord_model.find_by(col: "foo")
+    @db[:records].disable_insert_returning.insert(col: "foo")
+    refute_nil activerecord_model.find_by(col: "foo")
+
+    assert_nil activerecord_model.find_by(col: "bar")
+    @db[:records].returning(:id).insert(col: "bar")
+    refute_nil activerecord_model.find_by(col: "bar")
+  end
 end

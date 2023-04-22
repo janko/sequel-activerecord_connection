@@ -184,4 +184,15 @@ describe "sqlite3 connection" do
       assert_equal Time.new(2021, 1, 10), record.time
     end
   end
+
+  it "clears Active Records query cache" do
+    ActiveRecord::Base.connection.enable_query_cache!
+
+    activerecord_model = Class.new(ActiveRecord::Base)
+    activerecord_model.table_name = :records
+
+    assert_nil activerecord_model.find_by(col: "foo")
+    @db[:records].insert(col: "foo")
+    refute_nil activerecord_model.find_by(col: "foo")
+  end
 end

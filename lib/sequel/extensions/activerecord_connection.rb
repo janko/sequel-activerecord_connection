@@ -58,10 +58,14 @@ module Sequel
     end
 
     # Clear Active Record's query cache after potential data modifications.
-    def execute(*)
-      super
-    ensure
-      clear_activerecord_query_cache
+    %i[execute_ddl execute_dui execute_insert execute].each do |execute_method|
+      define_method(execute_method) do |*args, &block|
+        begin
+          super(*args, &block)
+        ensure
+          clear_activerecord_query_cache
+        end
+      end
     end
 
     private
