@@ -68,6 +68,26 @@ class Minitest::Test
       extensions: :activerecord_connection
   end
 
+  def connect_trilogy
+    options = {}
+
+    if ENV["CI"]
+      options[:username] = "root"
+      options[:host]     = "127.0.0.1"
+    else
+      options[:username] = "sequel_activerecord_connection"
+    end
+
+    activerecord_connect(
+      adapter:  "trilogy",
+      database: "sequel_activerecord_connection",
+      password: "sequel_activerecord_connection",
+      **options
+    )
+
+    @db = Sequel.trilogy(extensions: :activerecord_connection)
+  end
+
   def connect_sqlite3
     activerecord_connect(
       adapter: "sqlite3",
