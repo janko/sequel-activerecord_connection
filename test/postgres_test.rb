@@ -240,7 +240,7 @@ describe "postgres connection" do
     @db.transaction do |conn|
       rows = ActiveRecord::Base.connection.exec_query("SELECT TRUE")
 
-      assert_equal true, rows[0]["bool"]
+      assert_equal true, rows[0].values.first
     end
   end if ActiveRecord.version >= Gem::Version.new("5.0")
 
@@ -250,7 +250,7 @@ describe "postgres connection" do
 
   it "patches type maps for prepared statements" do
     rows = @db["SELECT TRUE"].prepare(:select, :select_true).call
-    assert_equal true, rows[0][:bool]
+    assert_equal true, rows[0].values.first
   end
 
   it "clears Active Records query cache" do
