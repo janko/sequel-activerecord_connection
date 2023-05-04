@@ -43,6 +43,8 @@ module Sequel
 
         yield conn
       end
+    ensure
+      clear_activerecord_query_cache
     end
 
     # Log executed queries into Active Record logger as well.
@@ -55,17 +57,6 @@ module Sequel
     # Match database timezone with Active Record.
     def timezone
       @timezone || activerecord_timezone
-    end
-
-    # Clear Active Record's query cache after potential data modifications.
-    %i[execute_ddl execute_dui execute_insert execute].each do |execute_method|
-      define_method(execute_method) do |*args, &block|
-        begin
-          super(*args, &block)
-        ensure
-          clear_activerecord_query_cache
-        end
-      end
     end
 
     private
