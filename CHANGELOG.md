@@ -1,3 +1,7 @@
+## HEAD
+
+* Drop support for Active Record 4.2 (@janko)
+
 ## 1.3.1 (2023-04-22)
 
 * Fix Active Record's query cache not being cleared in SQLite adapter (@janko)
