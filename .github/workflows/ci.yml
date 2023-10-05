@@ -35,7 +35,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby: ["ruby-2.4", "ruby-2.5", "ruby-2.6", "ruby-2.7", "ruby-3.0", "ruby-3.1", "ruby-3.2", "jruby-9.4"]
-        gemfile: ["activerecord-4.2", "activerecord-5.0", "activerecord-5.1", "activerecord-5.2", "activerecord-6.0", "activerecord-6.1", "activerecord-7.0", "activerecord-main"]
+        gemfile: ["activerecord-4.2", "activerecord-5.0", "activerecord-5.1", "activerecord-5.2", "activerecord-6.0", "activerecord-6.1", "activerecord-7.0", "activerecord-7.1", "activerecord-main"]
         exclude:
           - ruby: "ruby-3.2"
             gemfile: "activerecord-5.2"
@@ -66,13 +66,19 @@ jobs:
           - ruby: "ruby-2.6"
             gemfile: "activerecord-main"
           - ruby: "ruby-2.6"
+            gemfile: "activerecord-7.1"
+          - ruby: "ruby-2.6"
             gemfile: "activerecord-7.0"
           - ruby: "ruby-2.5"
             gemfile: "activerecord-main"
+          - ruby: "ruby-2.5"
+            gemfile: "activerecord-7.1"
           - ruby: "ruby-2.5"
             gemfile: "activerecord-7.0"
           - ruby: "ruby-2.4"
             gemfile: "activerecord-main"
+          - ruby: "ruby-2.4"
+            gemfile: "activerecord-7.1"
           - ruby: "ruby-2.4"
             gemfile: "activerecord-7.0"
           - ruby: "ruby-2.4"
@@ -82,7 +88,7 @@ jobs:
           - ruby: "jruby-9.4"
             gemfile: "activerecord-main"
           - ruby: "jruby-9.4"
-            gemfile: "activerecord-7.0"
+            gemfile: "activerecord-7.1"
           - ruby: "jruby-9.4"
             gemfile: "activerecord-5.2"
           - ruby: "jruby-9.4"
