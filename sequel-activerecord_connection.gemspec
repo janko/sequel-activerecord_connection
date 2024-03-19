@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "sequel-activerecord_connection"
-  spec.version       = "1.3.1"
+  spec.version       = "1.4.0"
   spec.authors       = ["Janko Marohnić"]
   spec.email         = ["janko.marohnic@gmail.com"]
 
