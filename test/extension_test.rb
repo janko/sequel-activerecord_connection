@@ -12,7 +12,7 @@ describe "General extension" do
     end
   end
 
-  describe ".connect" do
+  describe "#connect" do
     it "doesn't test the connection by default" do
       ActiveRecord::Base.establish_connection(**activerecord_config, database: "nonexistent")
 
@@ -29,6 +29,16 @@ describe "General extension" do
           extensions:     :activerecord_connection,
           keep_reference: false,
           test:           true
+      end
+    end
+  end
+
+  describe "#extension" do
+    it "only warns when database doesn't exist" do
+      ActiveRecord::Base.establish_connection(**activerecord_config, database: "nonexistent")
+
+      assert_output nil, "Sequel database extension :pg_enum failed to initialize because there is no database.\n" do
+        @db.extension :pg_enum
       end
     end
   end

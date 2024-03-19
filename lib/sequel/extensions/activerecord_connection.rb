@@ -32,6 +32,12 @@ module Sequel
       raise Error, "creating a Sequel connection is not allowed"
     end
 
+    def extension(*)
+      super
+    rescue ActiveRecord::NoDatabaseError
+      warn "Sequel database extension #{@loaded_extensions.last.inspect} failed to initialize because there is no database."
+    end
+
     # Avoid calling Sequel's connection pool, instead use Active Record's.
     def synchronize(*)
       activerecord_lock do

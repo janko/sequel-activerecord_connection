@@ -1,5 +1,7 @@
 ## HEAD
 
+* Only warn when Sequel extension fails to initialize because there is no database (@janko)
+
 * Drop support for Active Record 4.2 (@janko)
 
 ## 1.3.1 (2023-04-22)
