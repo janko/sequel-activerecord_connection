@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "after_commit_everywhere"
-
 module Sequel
   module ActiveRecordConnection
     Error = Class.new(Sequel::Error)
@@ -120,7 +118,7 @@ module Sequel
     # after_commit_everywhere gem.
     def add_transaction_hook(conn, type, block)
       if _trans(conn)[:activerecord]
-        AfterCommitEverywhere.public_send(type, &block)
+        activerecord_transaction_callback(type, &block)
       else
         super
       end
@@ -132,9 +130,21 @@ module Sequel
     # after_commit_everywhere gem.
     def add_savepoint_hook(conn, type, block)
       if _trans(conn)[:savepoints].last[:activerecord]
-        AfterCommitEverywhere.public_send(type, &block)
+        activerecord_transaction_callback(type, &block)
       else
         super
+      end
+    end
+
+    if ActiveRecord.version >= Gem::Version.new("7.2.0.alpha")
+      def activerecord_transaction_callback(type, &block)
+        activerecord_connection.current_transaction.public_send(type, &block)
+      end
+    else
+      require "after_commit_everywhere"
+
+      def activerecord_transaction_callback(type, &block)
+        AfterCommitEverywhere.public_send(type, &block)
       end
     end
 

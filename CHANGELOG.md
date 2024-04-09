@@ -1,3 +1,7 @@
+## HEAD
+
+* Use native transaction callbacks on Active Record 7.2+ (@janko)
+
 ## 1.4.0 (2024-03-19)
 
 * Only warn when Sequel extension fails to initialize because there is no database (@janko)
