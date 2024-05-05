@@ -14,6 +14,7 @@ module Sequel
     def self.extended(db)
       db.activerecord_model = ActiveRecord::Base
       db.opts[:test] = false unless db.opts.key?(:test)
+      db.instance_variable_set(:@transactions, {}) if RUBY_ENGINE == "jruby"
 
       begin
         require "sequel/extensions/activerecord_connection/#{db.adapter_scheme}"

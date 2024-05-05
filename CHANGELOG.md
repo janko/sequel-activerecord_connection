@@ -1,5 +1,7 @@
 ## HEAD
 
+* Fix `#rollback_checker`, `#rollback_on_exit` and `#after_rollback` not working reliably on JRuby and Sequel 5.78+ (@janko)
+
 * Use native transaction callbacks on Active Record 7.2+ (@janko)
 
 ## 1.4.0 (2024-03-19)
