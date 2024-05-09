@@ -1,4 +1,4 @@
-## HEAD
+## 1.4.1 (2024-05-10)
 
 * Fix `#rollback_checker`, `#rollback_on_exit` and `#after_rollback` not working reliably on JRuby and Sequel 5.78+ (@janko)
 
