@@ -137,7 +137,7 @@ module Sequel
       end
     end
 
-    if ActiveRecord.version >= Gem::Version.new("7.2.0.alpha")
+    if ActiveRecord.version >= Gem::Version.new("7.2.0")
       def activerecord_transaction_callback(type, &block)
         activerecord_connection.current_transaction.public_send(type, &block)
       end
