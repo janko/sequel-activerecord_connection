@@ -1,3 +1,9 @@
+## 1.4.2 (2024-09-23)
+
+* Fix compatibility with newer versions of Oracle Enhanced adapter (@janko)
+
+* Drop support for Ruby 2.4 (@janko)
+
 ## 1.4.1 (2024-05-10)
 
 * Fix `#rollback_checker`, `#rollback_on_exit` and `#after_rollback` not working reliably on JRuby and Sequel 5.78+ (@janko)
