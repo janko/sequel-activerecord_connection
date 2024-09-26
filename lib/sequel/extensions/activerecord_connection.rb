@@ -70,7 +70,10 @@ module Sequel
     # information to know whether we're in a transaction, whether to create a
     # savepoint, when to run transaction/savepoint hooks etc.
     def _trans(conn)
-      hash = super || { savepoints: [], activerecord: true }
+      hash = super || { activerecord: true }
+
+      # adapters that don't support savepoints won't have this assigned
+      hash[:savepoints] ||= []
 
       # add any ActiveRecord transactions/savepoints that have been opened
       # directly via ActiveRecord::Base.transaction
