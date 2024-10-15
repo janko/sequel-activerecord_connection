@@ -55,7 +55,7 @@ describe "General extension" do
     end
 
     it "materializes transactions" do
-      ActiveRecord::Base.connection.enable_lazy_transactions!
+      ActiveRecord::Base.connection_pool.with_connection(&:enable_lazy_transactions!)
 
       ActiveRecord::Base.transaction { @db.synchronize {} }
 
@@ -439,7 +439,7 @@ describe "General extension" do
     it "returns true inside ActiveRecord transaction" do
       ActiveRecord::Base.transaction do
         assert_equal true, @db.in_transaction?
-        assert_equal true, ActiveRecord::Base.connection.transaction_open?
+        assert_equal true, ActiveRecord::Base.connection_pool.with_connection(&:transaction_open?)
       end
     end
 
@@ -885,9 +885,9 @@ describe "General extension" do
 
   describe "#valid_connection?" do
     it "returns true if connection is valid" do
-      conn = @db.synchronize { |conn| conn }
-
-      assert_equal true, @db.valid_connection?(conn)
+      @db.synchronize do |conn|
+        assert_equal true, @db.valid_connection?(conn)
+      end
     end
   end
 

@@ -39,7 +39,7 @@ module Sequel
 
     # Avoid calling Sequel's connection pool, instead use Active Record's.
     def synchronize(*)
-      activerecord_lock do
+      activerecord_synchronize do
         conn = activerecord_connection.raw_connection
 
         if activerecord_connection_class && !conn.is_a?(activerecord_connection_class)
@@ -47,9 +47,9 @@ module Sequel
         end
 
         yield conn
+      ensure
+        activerecord_model.clear_query_caches_for_current_thread
       end
-    ensure
-      clear_activerecord_query_cache
     end
 
     # Log executed queries into Active Record logger as well.
@@ -158,13 +158,23 @@ module Sequel
       super
     end
 
-    if ActiveRecord.version >= Gem::Version.new("7.0")
-      def clear_activerecord_query_cache
-        activerecord_model.clear_query_caches_for_current_thread
+    def activerecord_synchronize
+      with_activerecord_connection do
+        activerecord_lock do
+          yield
+        end
+      end
+    end
+
+    if ActiveRecord.version >= Gem::Version.new("7.2.0")
+      def with_activerecord_connection
+        activerecord_model.with_connection(prevent_permanent_checkout: true) do
+          yield activerecord_connection
+        end
       end
     else
-      def clear_activerecord_query_cache
-        activerecord_connection.clear_query_cache
+      def with_activerecord_connection
+        yield activerecord_connection
       end
     end
 

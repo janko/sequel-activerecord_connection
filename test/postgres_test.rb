@@ -198,15 +198,16 @@ describe "postgres connection" do
   end
 
   it "converts disconnects into Sequel::DatabaseDisconnectError" do
-    @db.synchronize { |conn| @db.disconnect_connection(conn) }
-
-    assert_raises Sequel::DatabaseDisconnectError do
-      @db.copy_table(@db[:records])
+    @db.synchronize do |conn|
+      @db.disconnect_connection(conn)
+      assert_raises Sequel::DatabaseDisconnectError do
+        @db.copy_table(@db[:records])
+      end
     end
   end
 
   it "clears Active Record statement cache on ActiveRecord::PreparedStatementCacheExpired" do
-    statement_cache = ActiveRecord::Base.connection.instance_variable_get(:@statements)
+    statement_cache = ActiveRecord::Base.connection_pool.with_connection { |connection| connection.instance_variable_get(:@statements) }
 
     model = Class.new(ActiveRecord::Base)
     model.table_name = :records
@@ -238,7 +239,7 @@ describe "postgres connection" do
 
   it "reverts type maps inside a Sequel transaction" do
     @db.transaction do |conn|
-      rows = ActiveRecord::Base.connection.exec_query("SELECT TRUE")
+      rows = ActiveRecord::Base.connection_pool.with_connection { |connection| connection.exec_query("SELECT TRUE") }
 
       assert_equal true, rows[0].values.first
     end
@@ -254,7 +255,7 @@ describe "postgres connection" do
   end
 
   it "clears Active Records query cache" do
-    ActiveRecord::Base.connection.enable_query_cache!
+    ActiveRecord::Base.connection_pool.with_connection(&:enable_query_cache!)
 
     activerecord_model = Class.new(ActiveRecord::Base)
     activerecord_model.table_name = :records

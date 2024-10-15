@@ -27,7 +27,7 @@ module Sequel
 
         super
       rescue => e
-        activerecord_connection.clear_cache! if e.class.name == "ActiveRecord::PreparedStatementCacheExpired" && !in_transaction?
+        with_activerecord_connection(&:clear_cache!) if e.class.name == "ActiveRecord::PreparedStatementCacheExpired" && !in_transaction?
         raise
       end
 

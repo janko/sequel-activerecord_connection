@@ -14,6 +14,9 @@ require "sequel"
 require "stringio"
 require "active_support/core_ext/string"
 
+if ActiveRecord.respond_to?(:permanent_connection_checkout)
+  ActiveRecord.permanent_connection_checkout = :disallowed
+end
 if ActiveRecord.respond_to?(:legacy_connection_handling)
   ActiveRecord.legacy_connection_handling = false
 end
@@ -153,7 +156,7 @@ class Minitest::Test
 
   def activerecord_connect(**options)
     ActiveRecord::Base.establish_connection(options)
-    ActiveRecord::Base.connection.disable_lazy_transactions! if ActiveRecord.version >= Gem::Version.new("6.0")
+    ActiveRecord::Base.connection_pool.with_connection(&:disable_lazy_transactions!) if ActiveRecord.version >= Gem::Version.new("6.0")
   end
 
   def activerecord_config

@@ -1,3 +1,7 @@
+## HEAD
+
+* Avoid permanent checkout of Active Record 7.2+ connections (@janko)
+
 ## 1.4.3 (2024-09-26)
 
 * Fix compatibility with adapters that don't support savepoints (@janko)

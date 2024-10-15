@@ -186,7 +186,7 @@ describe "sqlite3 connection" do
   end
 
   it "clears Active Records query cache" do
-    ActiveRecord::Base.connection.enable_query_cache!
+    ActiveRecord::Base.connection_pool.with_connection(&:enable_query_cache!)
 
     activerecord_model = Class.new(ActiveRecord::Base)
     activerecord_model.table_name = :records
