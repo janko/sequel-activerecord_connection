@@ -35,7 +35,7 @@ jobs:
       fail-fast: false
       matrix:
         ruby: ["ruby-2.5", "ruby-2.6", "ruby-2.7", "ruby-3.0", "ruby-3.1", "ruby-3.2", "ruby-3.3", "jruby-9.4"]
-        gemfile: ["activerecord-5.0", "activerecord-5.1", "activerecord-5.2", "activerecord-6.0", "activerecord-6.1", "activerecord-7.0", "activerecord-7.1", "activerecord-7.2", "activerecord-main"]
+        gemfile: ["activerecord-5.0", "activerecord-5.1", "activerecord-5.2", "activerecord-6.0", "activerecord-6.1", "activerecord-7.0", "activerecord-7.1", "activerecord-7.2", "activerecord-8.0"]
         exclude:
           - ruby: "ruby-3.3"
             gemfile: "activerecord-5.2"
@@ -56,7 +56,7 @@ jobs:
           - ruby: "ruby-3.1"
             gemfile: "activerecord-5.0"
           - ruby: "ruby-3.0"
-            gemfile: "activerecord-main"
+            gemfile: "activerecord-8.0"
           - ruby: "ruby-3.0"
             gemfile: "activerecord-7.2"
           - ruby: "ruby-3.0"
@@ -66,11 +66,11 @@ jobs:
           - ruby: "ruby-3.0"
             gemfile: "activerecord-5.0"
           - ruby: "ruby-2.7"
-            gemfile: "activerecord-main"
+            gemfile: "activerecord-8.0"
           - ruby: "ruby-2.7"
             gemfile: "activerecord-7.2"
           - ruby: "ruby-2.6"
-            gemfile: "activerecord-main"
+            gemfile: "activerecord-8.0"
           - ruby: "ruby-2.6"
             gemfile: "activerecord-7.2"
           - ruby: "ruby-2.6"
@@ -78,7 +78,7 @@ jobs:
           - ruby: "ruby-2.6"
             gemfile: "activerecord-7.0"
           - ruby: "ruby-2.5"
-            gemfile: "activerecord-main"
+            gemfile: "activerecord-8.0"
           - ruby: "ruby-2.5"
             gemfile: "activerecord-7.2"
           - ruby: "ruby-2.5"
@@ -86,7 +86,7 @@ jobs:
           - ruby: "ruby-2.5"
             gemfile: "activerecord-7.0"
           - ruby: "jruby-9.4"
-            gemfile: "activerecord-main"
+            gemfile: "activerecord-8.0"
           - ruby: "jruby-9.4"
             gemfile: "activerecord-7.2"
           - ruby: "jruby-9.4"

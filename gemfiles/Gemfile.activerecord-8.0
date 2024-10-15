@@ -2,9 +2,7 @@ source "https://rubygems.org"
 
 gemspec path: ".."
 
-gem "activerecord", github: "rails/rails", glob: "activerecord/activerecord.gemspec"
-gem "activesupport", github: "rails/rails", glob: "activesupport/activesupport.gemspec"
-gem "activemodel", github: "rails/rails", glob: "activemodel/activemodel.gemspec"
+gem "activerecord", "~> 8.0.0.beta1"
 
 platform :mri do
   gem "pg",      "~> 1.0"
