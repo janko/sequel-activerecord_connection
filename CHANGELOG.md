@@ -1,4 +1,4 @@
-## HEAD
+## 1.5.0 (2024-10-16)
 
 * Avoid permanent checkout of Active Record 7.2+ connections (@janko)
 
