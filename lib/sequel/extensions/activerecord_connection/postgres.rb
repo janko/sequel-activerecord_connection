@@ -25,10 +25,12 @@ module Sequel
           fail Error, "#{key.inspect} transaction option is currently not supported" if opts.key?(key)
         end
 
-        super
-      rescue => e
-        with_activerecord_connection(&:clear_cache!) if e.class.name == "ActiveRecord::PreparedStatementCacheExpired" && !in_transaction?
-        raise
+        super do |conn|
+          yield conn
+        rescue => e
+          activerecord_connection.clear_cache! if e.class.name == "ActiveRecord::PreparedStatementCacheExpired"
+          raise
+        end
       end
 
       private
