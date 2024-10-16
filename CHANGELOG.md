@@ -1,6 +1,6 @@
 ## 1.5.0 (2024-10-16)
 
-* Avoid permanent checkout of Active Record 7.2+ connections (@janko)
+* Avoid permanent connection checkout on Active Record 7.2+ (@janko)
 
 ## 1.4.3 (2024-09-26)
 
