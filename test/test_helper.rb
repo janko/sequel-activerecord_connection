@@ -44,7 +44,7 @@ class Minitest::Test
   def connect_mysql2
     options = {}
 
-    if ActiveRecord.version >= Gem::Version.new("7.1.0.alpha")
+    if ActiveRecord.version >= Gem::Version.new("7.1")
       options[:prepared_statements] = false
     end
 

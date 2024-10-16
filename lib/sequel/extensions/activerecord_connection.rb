@@ -140,7 +140,7 @@ module Sequel
       end
     end
 
-    if ActiveRecord.version >= Gem::Version.new("7.2.0")
+    if ActiveRecord.version >= Gem::Version.new("7.2")
       def activerecord_transaction_callback(type, &block)
         activerecord_connection.current_transaction.public_send(type, &block)
       end
@@ -176,7 +176,7 @@ module Sequel
       end
     end
 
-    if ActiveRecord.version >= Gem::Version.new("7.2.0")
+    if ActiveRecord.version >= Gem::Version.new("7.2")
       def with_activerecord_connection
         activerecord_model.with_connection(prevent_permanent_checkout: true) do
           yield activerecord_connection
@@ -191,7 +191,7 @@ module Sequel
     # Active Record doesn't guarantee that a single connection can only be used
     # by one thread at a time, so we need to use locking, which is what Active
     # Record does internally as well.
-    if ActiveRecord.version >= Gem::Version.new("5.1.0")
+    if ActiveRecord.version >= Gem::Version.new("5.1")
       def activerecord_lock
         activerecord_connection.lock.synchronize do
           ActiveSupport::Dependencies.interlock.permit_concurrent_loads do

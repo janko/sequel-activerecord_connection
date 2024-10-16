@@ -104,7 +104,7 @@ describe "General extension" do
       q2.pop
 
       [thread1, thread2].each(&:join)
-    end unless ActiveRecord.version < Gem::Version.new("5.1.0") || ActiveRecord.version >= Gem::Version.new("7.2.0.alpha")
+    end unless ActiveRecord.version < Gem::Version.new("5.1") || ActiveRecord.version >= Gem::Version.new("7.2")
 
     it "checks the expected connection class" do
       db = Sequel.connect "sqlite://",
@@ -193,7 +193,7 @@ describe "General extension" do
         end
       end
 
-      if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")
+      if ActiveRecord.version < Gem::Version.new("7.1")
         assert_logged <<~SQL
           BEGIN
           SAVEPOINT active_record_1
@@ -401,28 +401,28 @@ describe "General extension" do
       @db.transaction(isolation: :uncommitted) { }
 
       assert_logged <<~SQL
-        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL READ UNCOMMITTED
+        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1")} ISOLATION LEVEL READ UNCOMMITTED
         COMMIT
       SQL
 
       @db.transaction(isolation: :committed) { }
 
       assert_logged <<~SQL
-        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL READ COMMITTED
+        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1")} ISOLATION LEVEL READ COMMITTED
         COMMIT
       SQL
 
       @db.transaction(isolation: :repeatable) { }
 
       assert_logged <<~SQL
-        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL REPEATABLE READ
+        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1")} ISOLATION LEVEL REPEATABLE READ
         COMMIT
       SQL
 
       @db.transaction(isolation: :serializable) { }
 
       assert_logged <<~SQL
-        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1.0.alpha")} ISOLATION LEVEL SERIALIZABLE
+        BEGIN#{"\nSET TRANSACTION" if ActiveRecord.version < Gem::Version.new("7.1")} ISOLATION LEVEL SERIALIZABLE
         COMMIT
       SQL
     end
