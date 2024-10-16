@@ -48,7 +48,7 @@ module Sequel
 
         yield conn
       ensure
-        activerecord_model.clear_query_caches_for_current_thread
+        clear_activerecord_query_cache
       end
     end
 
@@ -163,6 +163,16 @@ module Sequel
         activerecord_lock do
           yield
         end
+      end
+    end
+
+    if ActiveRecord.version >= Gem::Version.new("7.0")
+      def clear_activerecord_query_cache
+        activerecord_model.clear_query_caches_for_current_thread
+      end
+    else
+      def clear_activerecord_query_cache
+        activerecord_connection.clear_query_cache
       end
     end
 
