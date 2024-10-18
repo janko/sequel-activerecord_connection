@@ -44,7 +44,7 @@ The only hard dependencies are:
 
 * [ActiveRecord](https://github.com/rails/rails/tree/main/activerecord)
 * [Sequel](https://github.com/jeremyevans/sequel)
-* [after_commit_everywhere](https://github.com/Envek/after_commit_everywhere)
+* [after_commit_everywhere](https://github.com/Envek/after_commit_everywhere) (on Active Record 7.1 or older)
 
 ...which means you can use it with any Rack / Ruby based framework: 
 Rails / Roda / Sinatra etc. or even without a framework.
