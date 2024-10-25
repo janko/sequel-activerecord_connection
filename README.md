@@ -46,7 +46,7 @@ The only hard dependencies are:
 * [Sequel](https://github.com/jeremyevans/sequel)
 * [after_commit_everywhere](https://github.com/Envek/after_commit_everywhere) (on Active Record 7.1 or older)
 
-...which means you can use it with any Rack / Ruby based framework: 
+...which means you can use it with any Rack / Ruby based framework:
 Rails / Roda / Sinatra etc. or even without a framework.
 
 ## Installation
@@ -243,19 +243,6 @@ Sequel.postgres(extensions: [:activerecord_connection, :sql_log_normalizer])
 ```
 ```sql
 SELECT accounts.* FROM accounts WHERE accounts.email = ? LIMIT ?
-```
-
-Note that the `sql_log_normalizer` extension opens a database connection while
-it's being loaded. If you're setting up Sequel in a Rails initializer, you'll
-probably want to handle the database not existing, so that commands such as
-`rails db:create` continue to work.
-
-```rb
-DB = Sequel.postgres(extensions: :activerecord_connection)
-begin
-  DB.extension :sql_log_normalizer
-rescue ActiveRecord::NoDatabaseError
-end
 ```
 
 ## Tests
