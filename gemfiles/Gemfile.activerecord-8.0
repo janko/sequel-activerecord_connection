@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gemspec path: ".."
 
-gem "activerecord", "~> 8.0.0.beta1"
+gem "activerecord", "~> 8.0.0"
 
 platform :mri do
   gem "pg",      "~> 1.0"
