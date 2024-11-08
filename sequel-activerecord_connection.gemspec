@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.5"
 
   spec.add_dependency "sequel", "~> 5.38"
-  spec.add_dependency "activerecord", ">= 5.0", "< 8"
+  spec.add_dependency "activerecord", ">= 5.0", "< 8.1"
   spec.add_dependency "after_commit_everywhere", "~> 1.1"
 
   spec.add_development_dependency "sequel_pg" unless RUBY_ENGINE == "jruby"

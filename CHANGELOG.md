@@ -1,3 +1,7 @@
+## Unreleased
+
+* Add support for Active Record 8.0 (@phlipper)
+
 ## 1.5.0 (2024-10-16)
 
 * Avoid permanent connection checkout on Active Record 7.2+ (@janko)
