@@ -1,4 +1,4 @@
-## Unreleased
+## 1.5.1 (2024-11-08)
 
 * Add support for Active Record 8.0 (@phlipper)
 
