@@ -502,24 +502,22 @@ describe "General extension" do
       end
       assert after_commit_called
 
-      if ActiveRecord.version >= Gem::Version.new("5.0")
-        after_commit_called = false
-        ActiveRecord::Base.transaction(joinable: false) do
-          @db.transaction do
-            @db.after_commit { after_commit_called = true }
-            refute after_commit_called
-          end
-          assert after_commit_called
+      after_commit_called = false
+      ActiveRecord::Base.transaction(joinable: false) do
+        @db.transaction do
+          @db.after_commit { after_commit_called = true }
+          refute after_commit_called
         end
+        assert after_commit_called
+      end
 
-        after_commit_called = false
-        ActiveRecord::Base.transaction(joinable: false) do
-          ActiveRecord::Base.transaction do
-            @db.after_commit { after_commit_called = true }
-            refute after_commit_called
-          end
-          assert after_commit_called
+      after_commit_called = false
+      ActiveRecord::Base.transaction(joinable: false) do
+        ActiveRecord::Base.transaction do
+          @db.after_commit { after_commit_called = true }
+          refute after_commit_called
         end
+        assert after_commit_called
       end
 
       after_commit_called = false
@@ -582,25 +580,23 @@ describe "General extension" do
       end
       assert after_commit_called
 
-      if ActiveRecord.version >= Gem::Version.new("5.0")
-        after_commit_called = false
-        @db.transaction(auto_savepoint: true) do
-          ActiveRecord::Base.transaction do
-            @db.after_commit(savepoint: true) { after_commit_called = true }
-            refute after_commit_called
-          end
-          assert after_commit_called
+      after_commit_called = false
+      @db.transaction(auto_savepoint: true) do
+        ActiveRecord::Base.transaction do
+          @db.after_commit(savepoint: true) { after_commit_called = true }
+          refute after_commit_called
         end
-
-        after_commit_called = false
-        ActiveRecord::Base.transaction(joinable: false) do
-          ActiveRecord::Base.transaction do
-            @db.after_commit(savepoint: true) { after_commit_called = true }
-            refute after_commit_called
-          end
-          assert after_commit_called
-        end
+        assert after_commit_called
       end
+
+      after_commit_called = false
+      ActiveRecord::Base.transaction(joinable: false) do
+        ActiveRecord::Base.transaction do
+          @db.after_commit(savepoint: true) { after_commit_called = true }
+          refute after_commit_called
+        end
+        assert after_commit_called
+        end
 
       after_commit_called = false
       ActiveRecord::Base.transaction do
