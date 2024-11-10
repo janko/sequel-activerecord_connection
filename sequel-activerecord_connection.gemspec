@@ -1,8 +1,8 @@
 Gem::Specification.new do |spec|
   spec.name          = "sequel-activerecord_connection"
-  spec.version       = "1.5.1"
+  spec.version       = "2.0.0"
   spec.authors       = ["Janko Marohnić"]
-  spec.email         = ["janko.marohnic@gmail.com"]
+  spec.email         = ["janko@hey.com"]
 
   spec.summary       = %q{Allows Sequel to use ActiveRecord connection for database interaction.}
   spec.description   = %q{Allows Sequel to use ActiveRecord connection for database interaction.}
