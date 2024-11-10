@@ -38,23 +38,18 @@ background to share the same database connection, which is something Sequel
 wasn't designed for. Reusing Active Record's connection means (dis)connecting
 and sharing between threads is all handled automatically.
 
-## Framework Agnostic
-
-The only hard dependencies are:
-
-* [ActiveRecord](https://github.com/rails/rails/tree/main/activerecord)
-* [Sequel](https://github.com/jeremyevans/sequel)
-* [after_commit_everywhere](https://github.com/Envek/after_commit_everywhere) (on Active Record 7.1 or older)
-
-...which means you can use it with any Rack / Ruby based framework:
-Rails / Roda / Sinatra etc. or even without a framework.
-
 ## Installation
 
 Add the gem to your project:
 
 ```sh
 $ bundle add sequel-activerecord_connection
+```
+
+If you're using Active Record 7.1 or older, you'll also need to add the [after_commit_everywhere] gem:
+
+```sh
+$ bundle add after_commit_everywhere # on Active Record 7.1 or older
 ```
 
 ## Usage
@@ -67,7 +62,7 @@ appropriate Sequel adapter and load the `activerecord_connection` extension: e.g
 # e.g. Rails: config/initializers/sequel.rb
 
 require "sequel"
-DB = Sequel.postgres(extensions: :activerecord_connection) # postgres
+DB = Sequel.postgres(extensions: :activerecord_connection) # for PostgreSQL
 ```
 
 Now any Sequel operations that you make will internaly be done using the
@@ -286,3 +281,4 @@ Everyone interacting in this project's codebases, issue trackers, chat rooms and
 [Oracle enhanced]: https://github.com/rsim/oracle-enhanced
 [SQL Server]: https://github.com/rails-sqlserver/activerecord-sqlserver-adapter
 [sql_log_normalizer]: https://sequel.jeremyevans.net/rdoc-plugins/files/lib/sequel/extensions/sql_log_normalizer_rb.html
+[after_commit_everywhere]: https://github.com/Envek/after_commit_everywhere

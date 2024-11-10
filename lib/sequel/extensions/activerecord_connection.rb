@@ -118,8 +118,7 @@ module Sequel
 
     # When Active Record holds the transaction, we cannot use Sequel hooks,
     # because Sequel doesn't have knowledge of when the transaction is
-    # committed. So in this case we register an Active Record hook using the
-    # after_commit_everywhere gem.
+    # committed. So in this case we register the hook using Active Record.
     def add_transaction_hook(conn, type, block)
       if _trans(conn)[:activerecord]
         activerecord_transaction_callback(type, &block)
@@ -130,8 +129,7 @@ module Sequel
 
     # When Active Record holds the savepoint, we cannot use Sequel hooks,
     # because Sequel doesn't have knowledge of when the savepoint is
-    # released. So in this case we register an Active Record hook using the
-    # after_commit_everywhere gem.
+    # released. So in this case we register the hook using Active Record.
     def add_savepoint_hook(conn, type, block)
       if _trans(conn)[:savepoints].last[:activerecord]
         activerecord_transaction_callback(type, &block)
@@ -145,7 +143,12 @@ module Sequel
         activerecord_connection.current_transaction.public_send(type, &block)
       end
     else
-      require "after_commit_everywhere"
+      begin
+        gem "after_commit_everywhere", "~> 1.1"
+        require "after_commit_everywhere"
+      rescue LoadError
+        fail Error, %q(You need to add `gem "after_commit_everywhere", "~> 1.1"` to your Gemfile when using Active Record < 7.2)
+      end
 
       def activerecord_transaction_callback(type, &block)
         AfterCommitEverywhere.public_send(type, &block)
