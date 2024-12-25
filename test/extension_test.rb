@@ -104,7 +104,7 @@ describe "General extension" do
       q2.pop
 
       [thread1, thread2].each(&:join)
-    end unless ActiveRecord.version < Gem::Version.new("5.1") || ActiveRecord.version >= Gem::Version.new("7.2")
+    end unless ActiveRecord.version >= Gem::Version.new("7.2")
 
     it "checks the expected connection class" do
       db = Sequel.connect "sqlite://",
