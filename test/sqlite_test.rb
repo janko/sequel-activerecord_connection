@@ -88,7 +88,7 @@ describe "sqlite3 connection" do
       SQL
     else
       assert_logged <<~SQL
-        SELECT * FROM `records` WHERE (`col` = :c) LIMIT 1; {"c"=>"foo"}
+        SELECT * FROM `records` WHERE (`col` = :c) LIMIT 1; {"c" => "foo"}
       SQL
     end
   end
@@ -111,7 +111,7 @@ describe "sqlite3 connection" do
     else
       assert_logged <<~SQL
         PREPARE first_by_col: SELECT * FROM `records` WHERE (`col` = :c) LIMIT 1
-        EXECUTE first_by_col; {"c"=>"foo"}
+        EXECUTE first_by_col; {"c" => "foo"}
       SQL
     end
   end
