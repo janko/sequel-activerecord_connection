@@ -27,16 +27,10 @@ an Active Record transaction, that query won't actually be executed inside a
 database transaction. This is because transactions are tied to the database
 connection; if one connection opens a transaction, this doesn't affect queries
 executed on a different connection, even if both connections are used in the
-same ruby process. With this library, transactions and queries can be
-seamlessly combined between Active Record and Sequel.
+same ruby process.
 
-In Rails context, there are additional considerations for a Sequel connection
-to play nicely. Connecting and disconnecting would have to go in lockstep with
-Active Record, to make commands such as `rails db:create` and `rails db:drop`
-work. You'd also need to find a way for system tests and the app running in the
-background to share the same database connection, which is something Sequel
-wasn't designed for. Reusing Active Record's connection means (dis)connecting
-and sharing between threads is all handled automatically.
+With this library, transactions and queries can be seamlessly combined between
+Active Record and Sequel.
 
 ## Installation
 
