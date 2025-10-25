@@ -1,3 +1,7 @@
+## 2.0.1 (2025-10-25)
+
+* Allow Active Record 8.1+ (@janko)
+
 ## 2.0.0 (2024-11-10)
 
 * The `after_commit_everywhere` gem now needs to be added to the Gemfile manually on Active Record < 7.2 (@janko)
