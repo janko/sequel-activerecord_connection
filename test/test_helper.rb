@@ -8,6 +8,7 @@ end
 require "minitest/autorun"
 require "minitest/pride"
 
+require "logger"
 require "active_record"
 require "sequel"
 
