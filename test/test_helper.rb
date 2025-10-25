@@ -8,7 +8,7 @@ end
 require "minitest/autorun"
 require "minitest/pride"
 
-require "logger"
+require "logger" if ActiveRecord.version >= Gem::Version.new("6.0") && ActiveRecord.version < Gem::Version.new("7.1")
 require "active_record"
 require "sequel"
 
