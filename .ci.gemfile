@@ -31,4 +31,5 @@ end
 
 if RUBY_VERSION >= "4.0.0"
   gem "logger"
+  gem "benchmark"
 end
