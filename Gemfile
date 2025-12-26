@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "rake", "~> 12.0"
+gem "rake", "~> 13.0"
 
 platform :mri do
   gem "pg",      "~> 1.0"
