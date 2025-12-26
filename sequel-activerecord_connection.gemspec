@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/janko/sequel-activerecord_connection"
   spec.license       = "MIT"
 
-  spec.required_ruby_version = ">= 2.5"
+  spec.required_ruby_version = ">= 3.0"
 
   spec.add_dependency "sequel", "~> 5.38"
   spec.add_dependency "activerecord", ">= 5.1"
