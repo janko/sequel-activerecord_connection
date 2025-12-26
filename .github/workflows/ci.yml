@@ -35,45 +35,46 @@ jobs:
       fail-fast: false
       matrix:
         ruby: ["ruby-3.0", "ruby-3.1", "ruby-3.2", "ruby-3.3", "ruby-3.4", "ruby-4.0", "jruby-9.4"]
-        gemfile: ["activerecord-5.2", "activerecord-6.0", "activerecord-6.1", "activerecord-7.0", "activerecord-7.1", "activerecord-7.2", "activerecord-8.0", "activerecord-8.1"]
+        activerecord: ["5.2", "6.0", "6.1", "7.0", "7.1", "7.2", "8.0", "8.1"]
         exclude:
           - ruby: "ruby-4.0"
-            gemfile: "activerecord-5.2"
+            activerecord: "5.2"
           - ruby: "ruby-3.4"
-            gemfile: "activerecord-5.2"
+            activerecord: "5.2"
           - ruby: "ruby-3.3"
-            gemfile: "activerecord-5.2"
+            activerecord: "5.2"
           - ruby: "ruby-3.2"
-            gemfile: "activerecord-5.2"
+            activerecord: "5.2"
           - ruby: "ruby-3.1"
-            gemfile: "activerecord-8.1"
+            activerecord: "8.1"
           - ruby: "ruby-3.1"
-            gemfile: "activerecord-8.0"
+            activerecord: "8.0"
           - ruby: "ruby-3.1"
-            gemfile: "activerecord-5.2"
+            activerecord: "5.2"
           - ruby: "ruby-3.0"
-            gemfile: "activerecord-8.1"
+            activerecord: "8.1"
           - ruby: "ruby-3.0"
-            gemfile: "activerecord-8.0"
+            activerecord: "8.0"
           - ruby: "ruby-3.0"
-            gemfile: "activerecord-7.2"
+            activerecord: "7.2"
           - ruby: "ruby-3.0"
-            gemfile: "activerecord-5.2"
+            activerecord: "5.2"
           - ruby: "jruby-9.4"
-            gemfile: "activerecord-8.1"
+            activerecord: "8.1"
           - ruby: "jruby-9.4"
-            gemfile: "activerecord-8.0"
+            activerecord: "8.0"
           - ruby: "jruby-9.4"
-            gemfile: "activerecord-7.2"
+            activerecord: "7.2"
           - ruby: "jruby-9.4"
-            gemfile: "activerecord-7.1"
+            activerecord: "7.1"
           - ruby: "jruby-9.4"
-            gemfile: "activerecord-6.0"
+            activerecord: "6.0"
           - ruby: "jruby-9.4"
-            gemfile: "activerecord-5.2"
+            activerecord: "5.2"
 
     env:
-      BUNDLE_GEMFILE: gemfiles/Gemfile.${{ matrix.gemfile }}
+      BUNDLE_GEMFILE: .ci.gemfile
+      ACTIVERECORD_VERSION: ${{ matrix.activerecord }}
 
     steps:
       - uses: actions/checkout@v3
