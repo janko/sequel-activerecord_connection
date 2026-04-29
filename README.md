@@ -59,7 +59,7 @@ require "sequel"
 DB = Sequel.postgres(extensions: :activerecord_connection) # for PostgreSQL
 ```
 
-Now any Sequel operations that you make will internaly be done using the
+Now any Sequel operations that you make will internally be done using the
 ActiveRecord connection, so you should see the queries in your ActiveRecord
 logs.
 
@@ -67,7 +67,7 @@ logs.
 DB.create_table :posts do
   primary_key :id
   String :title, null: false
-  Stirng :body, null: false
+  String :body, null: false
 end
 
 DB[:posts].insert(
@@ -258,7 +258,7 @@ $ rake db_teardown_mysql
 
 ## Support
 
-Please feel free to raise a new disucssion in [Github issues](https://github.com/janko/sequel-activerecord_connection/discussions), or search amongst the existing questions there.
+Please feel free to raise a new discussion in [Github issues](https://github.com/janko/sequel-activerecord_connection/discussions), or search amongst the existing questions there.
 
 ## License
 
