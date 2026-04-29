@@ -83,14 +83,15 @@ DB[:posts].update(title: "sequel-activerecord_connection")
 #=> 1
 ```
 
-The database extension supports `postgresql`, `mysql2` and `sqlite3`
+The database extension supports `postgresql`, `mysql2`, `trilogy` and `sqlite3`
 ActiveRecord adapters, just make sure to initialize the corresponding Sequel
 adapter before loading the extension.
 
 ```rb
-Sequel.postgres(extensions: :activerecord_connection) # for "postgresql" adapter
-Sequel.mysql2(extensions: :activerecord_connection)   # for "mysql2" adapter
-Sequel.sqlite(extensions: :activerecord_connection)   # for "sqlite3" adapter
+Sequel.postgres(extensions: :activerecord_connection)  # for "postgresql" adapter
+Sequel.mysql2(extensions: :activerecord_connection)    # for "mysql2" adapter
+Sequel.trilogy(extensions: :activerecord_connection)   # for "trilogy" adapter
+Sequel.sqlite(extensions: :activerecord_connection)    # for "sqlite3" adapter
 ```
 
 If you're on JRuby, you should be using the JDBC adapters:
